@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <script>
+    try {
+      const saved = localStorage.getItem('color-scheme');
+      document.querySelector('meta[name="color-scheme"]').content = saved === 'dark' ? 'dark' : 'light';
+    } catch (_) {}
+  </script>
+  <title>BioRadius: The Dynamic Point of Safe Return</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body class="light-mode">
+  <div id="app">
+    <!-- Top Header Bar (48px) -->
+    <header class="top-bar">
+      <div class="brand-lockup">
+        <strong class="brand-title">BioRadius</strong>
+        <span class="brand-subtitle">Mars EVA Safe Return</span>
+      </div>
+
+      <nav id="top-nav-tabs" class="segmented-control top-nav-tabs" role="tablist" aria-label="Primary Workspace Navigation">
+        <button type="button" class="seg-btn dock-tab-btn active" role="tab" aria-selected="true" data-dock-tab="controls">
+          ⌚ Controls &amp; Watch
+        </button>
+        <button type="button" class="seg-btn dock-tab-btn" role="tab" aria-selected="false" data-dock-tab="horizon" title="Core Deliverable: Zero-GPS 360° Camera Horizon &amp; Optical Compass Lock">
+          🧭 Zero-GPS Horizon
+        </button>
+        <button type="button" class="seg-btn dock-tab-btn" role="tab" aria-selected="false" data-dock-tab="guide" title="Open Full-Page Astronaut EVA User Guide (Hotkey: ?)">
+          📘 EVA Guide
+        </button>
+        <button type="button" class="seg-btn" data-open-dialog="ops-dialog" title="Open Field Ops Console &amp; Custom DEM Ingest">
+          🛰️ Field Ops
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <div id="site-switcher" class="segmented-control" role="group" aria-label="Martian Landing Site">
+          <button type="button" class="seg-btn active" data-site="MOUNT_SHARP_BOXWORK">Mount Sharp Boxwork</button>
+          <button type="button" class="seg-btn" data-site="JEZERO_DELTA">Jezero Delta</button>
+          <button type="button" class="seg-btn" id="btn-site-custom" data-site="CUSTOM_MISSION_DEM" hidden>Custom DEM</button>
+        </div>
+
+        <button type="button" id="data-provenance-pill" class="hud-pill provenance-pill" title="Inspect NASA Live &amp; Surrogate Data Provenance">
+          📡 Data: Mars Sim (Offline)
+        </button>
+
+        <button type="button" id="audit-pill" class="hud-pill audit-pill" title="Inspect 7-Gate Mathematical Audit">
+          ✅ 7/7 Verified
+        </button>
+
+        <button type="button" id="theme-toggle-btn" class="hud-pill theme-toggle-btn" title="Toggle Lite / Dark UI Theme" aria-pressed="true">
+          🌙 Dark Mode
+        </button>
+
+        <button type="button" id="play-story-btn" class="hud-pill primary-btn" title="Play 30-Second 4-Act Story (Hotkeys 1–4)">
+          ▶ Play 30s Story
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Spatial Split Workspace -->
+    <main id="workspace-split" class="workspace-split">
+      <!-- Left 68% 3D Martian Viewport -->
+      <section id="viewport-stage" aria-label="3D Martian Terrain and Isochrone Viewport">
+        <div id="three-canvas-host"></div>
+        <div id="viewport-drop-overlay" class="viewport-drop-overlay" hidden>
+          <span>📂 Drop ESRI .ASC, PDS .CSV, or 16-bit .RAW DEM to ingest into 150×150 Solver Arena</span>
+        </div>
+
+        <!-- Top-Left Floating HUD Telemetry Pill -->
+        <div id="hud-coords" class="floating-hud hud-top-left">
+          <div class="hud-row">
+            <span class="hud-label">
+              POSITION
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Position HUD">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Suit Grid Position:</strong> Live <code>(GX, GY)</code> cell inside the <code>150×150</code> (`10 km × 10 km`) terrain matrix and straight-line distance from Base Habitat `(75, 75)`.
+                </span>
+              </span>
+            </span>
+            <span id="hud-pin-coords" class="mono-num">GX 85, GY 65 • 0.95 km</span>
+          </div>
+          <div class="hud-row">
+            <span class="hud-label">
+              ELEV / RAD
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Elevation and Radiation HUD">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Elevation &amp; Dose Rate:</strong> MOLA/HiRISE altitude (<code>m</code>) and live radiation dose rate (<code>µSv/hr</code>) shielded by surrounding canyon horizon (<code>SVF</code>).
+                </span>
+              </span>
+            </span>
+            <span id="hud-elev-rad" class="mono-num">-2180 m • 8.9 µSv/hr</span>
+          </div>
+          <div class="hud-row">
+            <span class="hud-label">
+              SOLVER
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Dual-Pass Solver Latency">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Physics Compute Time:</strong> Wall-clock time (<code>ms</code>) to solve unabridged 8-connected Dual-Pass Dijkstra across all 22,500 cells plus Marching Squares contours.
+                </span>
+              </span>
+            </span>
+            <span id="hud-solver-ms" class="mono-num">3.1 ms</span>
+          </div>
+          <div class="hud-row">
+            <span class="hud-label">
+              ZERO-GPS
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Zero-GPS Terrain Lock">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Zero-GPS Horizon Lock:</strong> Correlation confidence (<code>NCC %</code>) and optical compass heading comparing the suit camera skyline against orbital Mars elevation data. Click readout to inspect.
+                </span>
+              </span>
+            </span>
+            <span id="hud-trn-lock" class="mono-num hud-trn-link" role="button" tabindex="0" title="Click to open Zero-GPS 360° Horizon Lock">99.9% • Yaw +0°</span>
+          </div>
+        </div>
+
+        <!-- Top-Right Compact Contour Color Legend & Waypoint Quick Jump -->
+        <div class="floating-hud hud-top-right">
+          <div class="legend-strip">
+            <span class="legend-dot dot-safe"></span><span>Safe Zone</span>
+            <span class="legend-dot dot-caution"></span><span>Caution</span>
+            <span class="legend-dot dot-exceeded"></span><span>Turn Back (Red)</span>
+            <span class="legend-dot dot-path"></span><span>Return Route</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain Safe Return Contour Colors">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>Safe Return Contours:</strong><br>
+                • <strong>Safe Zone (Green):</strong> <code>T &lt; 0.75</code> — ample outbound + return reserve.<br>
+                • <strong>Caution (Amber):</strong> <code>0.75–1.00</code> — approaching turnaround ceiling.<br>
+                • <strong>Turn Back (Red):</strong> <code>T &gt; 1.00</code> — reserve deficit to reach Base safely.<br>
+                • <strong>Return Route (Blue):</strong> Energy-optimal path around cliffs &amp; drift sand.
+              </span>
+            </span>
+          </div>
+          <div id="waypoint-pills" class="waypoint-pills"></div>
+        </div>
+
+        <!-- Bottom-Center 5 NASA Layer Pills (Single-Line Row: Toggle + Shader + Info Tooltip + Impact) -->
+        <div id="layer-bar" class="floating-hud layer-bar" role="toolbar" aria-label="NASA Data Layers">
+          <div class="layer-pill active" data-layer="topo">
+            <div class="layer-pill-top">
+              <label class="layer-toggle" title="Toggle HiRISE Slope Cutoff (>33°) in Physics">
+                <input type="checkbox" data-physics="topo" checked />
+              </label>
+              <button type="button" class="layer-shader-btn" data-shader="topo">⛰️ Steep Cliffs · HiRISE</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Steep Cliffs · HiRISE">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Kept Selected (✓):</strong> Blocks impassable <code>&gt;33°</code> cliffs so routes detour safely, and scores uphill/downhill work at <code>3.71 m/s²</code>. Uncheck to ignore cliff barriers.<br>
+                  <strong>Cells Blocked:</strong> Steep cliff grid cells forbidden for return routes.
+                </span>
+              </span>
+            </div>
+            <span class="layer-impact mono-num" id="impact-topo">&gt;33° Cliffs: -- Blocked</span>
+          </div>
+
+          <div class="layer-pill" data-layer="themis">
+            <div class="layer-pill-top">
+              <label class="layer-toggle" title="Toggle THEMIS Drift Sand &amp; Shadow Thermal in Physics">
+                <input type="checkbox" data-physics="themis" checked />
+              </label>
+              <button type="button" class="layer-shader-btn" data-shader="themis">🏜️ Sand &amp; Cold · THEMIS</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Sand &amp; Cold · THEMIS">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Kept Selected (✓):</strong> Models loose drift sand slip (<code>TIU &lt; 100 ⇒ 1.85×</code>) and shadowed terrain cold (<code>165 K</code> vs <code>235 K</code>), raising burn &amp; heater power.<br>
+                  <strong>-XX% Area:</strong> Safe return footprint lost compared to firm, warm terrain.
+                </span>
+              </span>
+            </div>
+            <span class="layer-impact mono-num" id="impact-themis">THEMIS Sand: --% Area</span>
+          </div>
+
+          <div class="layer-pill" data-layer="crism">
+            <div class="layer-pill-top">
+              <label class="layer-toggle" title="Toggle CRISM Sample Mass Penalty in Physics">
+                <input type="checkbox" data-physics="crism" checked />
+              </label>
+              <button type="button" class="layer-shader-btn" data-shader="crism">🪨 Sample Load · CRISM</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Sample Load · CRISM">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Kept Selected (✓):</strong> Includes collected rock samples (<code>+15 kg</code> default) in carried mass. Uncheck to simulate <strong>emergency sample jettison</strong> to regain range.<br>
+                  <strong>-XX% Area:</strong> Safe return area penalty from carrying sample mass.
+                </span>
+              </span>
+            </div>
+            <span class="layer-impact mono-num" id="impact-crism">Samples (+15kg): --% Area</span>
+          </div>
+
+          <div class="layer-pill" data-layer="meda">
+            <div class="layer-pill-top">
+              <label class="layer-toggle" title="Toggle REMS/MEDA CO2 Wind Drag in Physics">
+                <input type="checkbox" data-physics="meda" checked />
+              </label>
+              <button type="button" class="layer-shader-btn" data-shader="meda">💨 Wind Drag · MEDA</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Wind Drag · MEDA">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Kept Selected (✓):</strong> Applies directional <code>8.5 m/s</code> Martian wind drag &amp; convective heat loss across exposed ridges.<br>
+                  <strong>XX% Area:</strong> Net safe-area shift caused by Mars atmospheric wind drag.
+                </span>
+              </span>
+            </div>
+            <span class="layer-impact mono-num" id="impact-meda">MEDA Wind: --% Area</span>
+          </div>
+
+          <div class="layer-pill" data-layer="rad">
+            <div class="layer-pill-top">
+              <label class="layer-toggle" title="Toggle RAD/DONKI Radiation Dose in Physics">
+                <input type="checkbox" data-physics="rad" checked />
+              </label>
+              <button type="button" class="layer-shader-btn" data-shader="rad">☀️ Radiation · RAD</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Radiation · RAD">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Kept Selected (✓):</strong> Enforces radiation limits (<code>µSv/hr</code>) using 36-azimuth Canyon Sky-View (<code>SVF</code>) rock shielding — preferring sheltered walls during DONKI solar storms.<br>
+                  <strong>Nominal (0% Area):</strong> Sun is quiet; turns active/shrinks range during SEP storms.
+                </span>
+              </span>
+            </div>
+            <span class="layer-impact mono-num" id="impact-rad">RAD Nominal (0% Area)</span>
+          </div>
+        </div>
+
+        <!-- Low-Power Eco Overlay when GPU Power-Gated (Key 3 / Eco Toggle) -->
+        <div id="eco-overlay" class="eco-overlay hidden" aria-hidden="true">
+          <div class="eco-overlay-card">
+            <span class="eco-badge">⚡ CR2032 1Hz ECO MODE ENGAGED</span>
+            <strong>WebGL2 GPU Power-Gated (0.0 mW)</strong>
+            <p class="mono-num">14.1 mA / 42.3 mW → 15.6 HRS ON ONE 3V CR2032 COIN CELL</p>
+            <button type="button" id="eco-resume-btn" class="hud-pill primary-btn">Resume 60 Hz 3D Stage</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right 32% Flight Dock (max-width: 410px) -->
+      <aside id="flight-dock" aria-label="Astronaut Bioenergetic Flight Dock">
+        <!-- Always-Visible Primary Hero Question & Status Card -->
+        <section id="hero-status-card" class="bento-card hero-card">
+          <div class="hero-question">
+            <span>AM I STILL INSIDE THE SAFE RETURN RADIUS?</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain Safe Return Margin">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>Safe Return Margin (POSR):</strong> Evaluates whether cumulative outbound + return energy stays within usable <code>kcal</code>, <code>O₂</code>, <code>Battery</code>, and <code>Radiation</code> ceilings.<br>
+                • <strong>Safe (&lt;0.75):</strong> Green margin + turnaround distance.<br>
+                • <strong>Caution (0.75–1.0):</strong> Nearing reserve limit.<br>
+                • <strong>Turn Back (&gt;1.0):</strong> Immediate turnaround advised.
+              </span>
+            </span>
+          </div>
+          <div id="hero-status-pill" class="hero-status-pill state-safe">
+            ✅ INSIDE SAFE RETURN (+XX% MARGIN • X.XX km TO TURNAROUND)
+          </div>
+          <div class="hero-submetrics mono-num">
+            <span id="hero-burn-rate">Burn: -- kcal/hr</span>
+            <span id="hero-o2-batt">O₂: -- kg • Batt: -- Wh</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain Metabolic Burn and Suit Reserves">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>Live Suit Submetrics:</strong><br>
+                • <strong>Burn (kcal/hr &amp; W):</strong> Instantaneous Mars suit exertion at `3.71 m/s²` + terrain slip.<br>
+                • <strong>O₂ / Batt:</strong> Remaining PLSS breathable oxygen (`kg`) and thermal/avionics battery (`Wh`).
+              </span>
+            </span>
+          </div>
+        </section>
+
+        <!-- Tab 1: Unified Controls, Watch Chronometer & Crew Health -->
+        <div class="dock-tab-panel" data-tab-panel="controls">
+          <section class="bento-card watch-card">
+            <div class="watch-layout">
+              <canvas id="chronometer-canvas" width="420" height="420" aria-label="Apple Watch Ultra Wayfinder Chronometer"></canvas>
+              <div class="watch-side-controls">
+                <div class="watch-btn-row">
+                  <button type="button" id="eco-toggle-btn" class="eco-toggle-btn" aria-pressed="false">
+                    ⚡ 1Hz Low-Power Watch
+                  </button>
+                  <span class="layer-info" tabindex="0" role="button" aria-label="Explain Wayfinder Watch and 1Hz Eco Mode">
+                    i
+                    <span class="layer-tooltip" role="tooltip">
+                      <strong>Wayfinder Watch &amp; 1Hz Eco Mode:</strong><br>
+                      • Outer bezel shows 360° horizon lock &amp; orange <code>Home</code> bearing.<br>
+                      • Inner rings track <code>O₂</code> and <code>Batt/kcal</code>.<br>
+                      • <strong>1Hz Eco Mode</strong> gates the WebGL2 3D GPU (`0.0 mW`), dropping power to <code>42.3 mW</code> (`15.6 HRS` on one CR2032 coin cell).
+                    </span>
+                  </span>
+                </div>
+                <div id="power-telemetry-readout" class="power-readout mono-num">
+                  60Hz 3D • 231.9 mW • 2.8 HRS
+                </div>
+                <div id="act-indicator" class="act-indicator mono-num">
+                  LIVE EVA TELEMETRY
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="bento-card controls-card">
+            <div class="slider-group">
+              <div class="slider-header">
+                <label class="label-with-info" for="slider-hr">
+                  <span>Heart Rate</span>
+                  <span class="layer-info" tabindex="0" role="button" aria-label="Explain Heart Rate Input">
+                    i
+                    <span class="layer-tooltip" role="tooltip">
+                      <strong>Crew Heart Rate (BPM):</strong> Drives effective cardiovascular strain (`%HRR`) and NASA-STD-3001 triage multiplier above <code>75% HRR</code>, shrinking the safe return perimeter under high exertion.
+                    </span>
+                  </span>
+                </label>
+                <span id="val-hr" class="mono-num">88 BPM</span>
+              </div>
+              <input type="range" id="slider-hr" min="60" max="190" step="1" value="88" />
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <label class="label-with-info" for="slider-mass">
+                  <span>Suit + Sample Load</span>
+                  <span class="layer-info" tabindex="0" role="button" aria-label="Explain Suit and Sample Load">
+                    i
+                    <span class="layer-tooltip" role="tooltip">
+                      <strong>Suit + Collected Mass (kg):</strong> Combines <code>50 kg</code> suit mass + collected rocks added to the `82 kg` crew mass in partial gravity (`3.71 m/s²`), raising uphill and sand-slip work.
+                    </span>
+                  </span>
+                </label>
+                <span id="val-mass" class="mono-num">65 kg</span>
+              </div>
+              <input type="range" id="slider-mass" min="50" max="120" step="1" value="65" />
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <label class="label-with-info" for="slider-kcal">
+                  <span>Calorie Reserve</span>
+                  <span class="layer-info" tabindex="0" role="button" aria-label="Explain Calorie Reserve">
+                    i
+                    <span class="layer-tooltip" role="tooltip">
+                      <strong>Usable Metabolic Reserve (kcal):</strong> Total mission energy budget minus a mandatory <code>250 kcal</code> safety buffer. Lowering reserves shrinks the green/amber safe return contour immediately.
+                    </span>
+                  </span>
+                </label>
+                <span id="val-kcal" class="mono-num">350 kcal</span>
+              </div>
+              <input type="range" id="slider-kcal" min="300" max="2000" step="10" value="350" />
+            </div>
+
+            <div class="sample-btn-row">
+              <button type="button" id="btn-collect-sample" class="sample-btn">
+                ⛏️ Collect +15 kg Core Sample
+              </button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Collect Core Sample">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Simulate Field Sampling:</strong> Adds <code>+15 kg</code> to <code>Suit + Sample Load</code> (up to `120 kg`) so you can test whether carrying heavier geological cores keeps your return corridor safe.
+                </span>
+              </span>
+            </div>
+          </section>
+
+          <section class="bento-card waypoints-card">
+            <div class="card-section-title">
+              <span>QUICK WAYPOINT JUMP (CLICK TO MOVE PIN)</span>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Quick Waypoint Jump">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Preset EVA Waypoints:</strong> Instantly repositions the Astronaut Pin to key rover/geology sites (`WP-1` through `WP-3` or `Hab Base`) to inspect safety margin and return routing.
+                </span>
+              </span>
+            </div>
+            <div id="waypoint-pills-dock" class="waypoint-pills"></div>
+          </section>
+
+          <details id="drawer-vitals" class="bento-accordion" open>
+            <summary id="summary-vitals" class="mono-num">
+              🫀 Crew Health &amp; Safety Trend: Normal
+            </summary>
+            <div class="drawer-body">
+              <div id="vitals-grid" class="vitals-grid">
+                <div class="vital-cell">
+                  <span class="vital-name">
+                    <span>HEART STRAIN</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Heart Strain Multiplier">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Cardiovascular Strain:</strong> Combines resting/manual HR with slope work (`+0.085/W` above `320 W`). Above `75% HRR`, fatigue raises burn multiplier above `1.00×`.
+                      </span>
+                    </span>
+                  </span>
+                  <strong id="vital-cv" class="mono-num">88 BPM • Normal</strong>
+                </div>
+                <div class="vital-cell">
+                  <span class="vital-name">
+                    <span>BLOOD OXYGEN (SpO₂)</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Blood Oxygen Saturation">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Hypoxia Safety (SpO₂):</strong> Tracks arterial oxygen saturation (`98 / max(82, SpO₂%)`). Dropping below `95%` signals PLSS hypoxia risk and lowers usable endurance.
+                      </span>
+                    </span>
+                  </span>
+                  <strong id="vital-spo2" class="mono-num">98.0% • Normal</strong>
+                </div>
+                <div class="vital-cell">
+                  <span class="vital-name">
+                    <span>BODY TEMP</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Body Core Temperature">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Thermal Strain (°C):</strong> Monitors core heat buildup (`Q10` exponential penalty above `37.5°C`) under sustained climbing or heavy suit loads.
+                      </span>
+                    </span>
+                  </span>
+                  <strong id="vital-temp" class="mono-num">37.1°C • Normal</strong>
+                </div>
+                <div class="vital-cell">
+                  <span class="vital-name">
+                    <span>SUIT CO₂</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Suit Partial Pressure CO2">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Hypercapnia Risk (ppCO₂):</strong> Tracks scrubber CO₂ partial pressure in `mmHg` (`+7.5%` metabolic penalty per `mmHg` above `2.5 mmHg`).
+                      </span>
+                    </span>
+                  </span>
+                  <strong id="vital-co2" class="mono-num">1.8 mmHg • Normal</strong>
+                </div>
+              </div>
+              <canvas id="sparkline-canvas" width="700" height="145" aria-label="Dual-Axis HR and Calorie Reserve vs Safe Radius Sparkline"></canvas>
+            </div>
+          </details>
+        </div>
+
+        <!-- Tab 2: Zero-GPS 360° Horizon Camera Match & Mission Tools -->
+        <div class="dock-tab-panel" data-tab-panel="horizon" hidden>
+          <details id="drawer-skyline" class="bento-accordion" open>
+            <summary id="summary-skyline" class="mono-num">
+              360° Horizon Camera Match: 99.4% (±14m)
+            </summary>
+            <div class="drawer-body">
+              <div class="deliverable-callout">
+                <div class="deliverable-tag">
+                  <span>⭐ CORE DELIVERABLE • ZERO-GPS TERRAIN MATCHING &amp; COMPASS</span>
+                  <span class="layer-info" tabindex="0" role="button" aria-label="Explain Zero-GPS Terrain Matching">
+                    i
+                    <span class="layer-tooltip" role="tooltip">
+                      <strong>How Zero-GPS Horizon Lock Works:</strong> Extracts a 36-azimuth (`10°`) skyline curve from the suit camera, indexes it via 8-harmonic FFT Parseval magnitudes against a `25×25` orbital LUT, and refines position &amp; true-North heading by cyclic Normalized Cross-Correlation (`NCC`).
+                    </span>
+                  </span>
+                </div>
+                <p class="deliverable-desc">
+                  Mars has <strong>no GPS satellites</strong> and <strong>no global magnetic dipole field</strong> for compasses. This optical terrain-relative solver matches the suit visor’s 360° skyline silhouette against orbital Mars elevation maps to lock both suit coordinates and true-North heading — and doubles as Canyon Sky-View radiation shielding.
+                </p>
+              </div>
+              <canvas id="skyline-canvas" width="700" height="180" aria-label="360 Degree DEM vs Visor Silhouette Waveform"></canvas>
+              <div id="skyline-meta" class="drawer-caption mono-num">
+                Matches 360° camera silhouette against Mars elevation map when GPS is unavailable
+              </div>
+              <div id="trn-metrics-grid" class="trn-metrics-grid">
+                <div class="trn-stat">
+                  <span class="trn-label">
+                    <span>HORIZON MATCH (NCC)</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Horizon Match NCC Score">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Normalized Cross-Correlation (NCC):</strong> Similarity score (`0–100%`) between the live camera horizon ridge profile and the orbital DEM reference at the matched cell.
+                      </span>
+                    </span>
+                  </span>
+                  <span id="trn-val-ncc" class="trn-value mono-num">99.9%</span>
+                </div>
+                <div class="trn-stat">
+                  <span class="trn-label">
+                    <span>ZERO-GPS POSITION</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Zero-GPS Position Fix">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Optical Grid Fix:</strong> Matched `(GX, GY)` suit coordinates and residual horizontal uncertainty (`±m`) computed completely without satellite navigation.
+                      </span>
+                    </span>
+                  </span>
+                  <span id="trn-val-pos" class="trn-value mono-num">GX 85, GY 65 (±14m)</span>
+                </div>
+                <div class="trn-stat">
+                  <span class="trn-label">
+                    <span>OPTICAL COMPASS</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Optical True-North Compass">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>True-North Heading Calibration:</strong> Azimuth circular shift (`Yaw°`) aligning visor imagery to orbital True-North — replacing a magnetic compass on Mars.
+                      </span>
+                    </span>
+                  </span>
+                  <span id="trn-val-yaw" class="trn-value mono-num">Yaw +0° True-N</span>
+                </div>
+                <div class="trn-stat">
+                  <span class="trn-label">
+                    <span>MATCH LATENCY</span>
+                    <span class="layer-info" tabindex="0" role="button" aria-label="Explain Terrain Match Latency">
+                      i
+                      <span class="layer-tooltip" role="tooltip">
+                        <strong>Terrain-Relative Match Time:</strong> Wall-clock execution time (`ms`) for Parseval spectral prefilter + `5×5` cyclic NCC local refinement.
+                      </span>
+                    </span>
+                  </span>
+                  <span id="trn-val-ms" class="trn-value mono-num">1.2 ms</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Dedicated Full-Page Astronaut EVA User Guide (Navigated via Top Bar "EVA Guide" or [?]) -->
+    <section id="guide-dialog" class="guide-page" aria-label="Astronaut EVA User Guide and Field Operations Manual" hidden>
+      <div class="guide-page-inner">
+        <header class="guide-page-header bento-card">
+          <div>
+            <div class="deliverable-tag">ASTRONAUT FIELD MANUAL &amp; SYSTEM ARCHITECTURE</div>
+            <h1 class="guide-page-title">📘 BioRadius Astronaut EVA User Guide &amp; Field Operations Manual</h1>
+            <p class="dialog-lead">
+              <strong>Core Question Answered Continuously:</strong> <em>“Can the EVA crewmember safely reach the Habitat / Pressurized Rover right now — and if not, what physiological, mass, or environmental factor must change?”</em>
+            </p>
+          </div>
+          <button type="button" id="btn-guide-back" class="hud-pill primary-btn">
+            Back to 3D Mission Workspace
+          </button>
+        </header>
+
+        <div class="guide-page-grid">
+          <section class="ops-card">
+            <h3>1. Mission Triage Banner (`SAFE` / `CAUTION` / `EXCEEDED`)</h3>
+            <ul class="guide-list">
+              <li><span class="guide-swatch swatch-safe"></span><strong>SAFE (<code>T ≤ 0.75</code>):</strong> Round-trip resource cost leaves ≥ 25% margin across O₂, battery, calories, and radiation. Readouts show remaining <code>+% MARGIN</code> and distance to turnaround along your current heading.</li>
+              <li><span class="guide-swatch swatch-caution"></span><strong>CAUTION (<code>0.75 &lt; T ≤ 1.0</code>):</strong> <em>Default startup state at <code>350 kcal</code></em> (<code>16%</code> margin, <code>0.09 km</code> to limit at <code>GX 85, GY 65</code>). Begin return traverse before exceeding 100% reserve capacity.</li>
+              <li><span class="guide-swatch swatch-red"></span><strong>EXCEEDED (<code>T &gt; 1.0</code>):</strong> Turn back immediately. Follow the glowing cobalt return path; banner displays exact <code>-kcal</code> and <code>-% O₂</code> deficits required for survival triage or sample jettison.</li>
+            </ul>
+          </section>
+
+          <section class="ops-card">
+            <h3>2. Reading the 3D Terrain Map &amp; Red Markings</h3>
+            <ul class="guide-list">
+              <li><span class="guide-swatch swatch-safe"></span><strong>Emerald Tint + Amber Ring (<code>T = 0.75</code>):</strong> Safe interior (22% green blend) transitioning to the 75% caution buffer (20% amber blend).</li>
+              <li><span class="guide-swatch swatch-red"></span><strong>Thick Red Terrain Bands (<code>&gt; 33.0°</code> Cliffs):</strong> Impassable geotechnical slopes (e.g., Gediz Vallis &amp; Jezero Delta scarps). Solver assigns infinite step cost when <em>HiRISE Slope</em> is enabled and routes safely around them.</li>
+              <li><span class="guide-swatch swatch-red"></span><strong>Outer Perimeter Line (<code>T = 1.0</code>):</strong> Green while inside safe return; switches to <strong>red (<code>#FF453A</code>)</strong> when <code>EXCEEDED</code> so the minimum return boundary stays visible inside the shaded No-Return Red Zone.</li>
+              <li><span class="guide-swatch swatch-blue"></span><strong>Cobalt Blue Tube (<code>#0A84FF</code>):</strong> Minimum-energy directed path back to Base Habitat <code>(75, 75)</code>. Drag the astronaut pin or click any amber waypoint beacon to replan live.</li>
+            </ul>
+          </section>
+
+          <section class="ops-card">
+            <h3>3. Five NASA Terrain Layers (Bottom Bar)</h3>
+            <p class="ops-desc">Each pill switches the 3D terrain coloring, toggles that hazard in route planning, and measures live safe-area impact:</p>
+            <ul class="guide-list">
+              <li><strong>⛰️ Steep Cliffs · HiRISE:</strong> Blocks impassable <code>&gt; 33.0°</code> scarps and models uphill vs. downhill work under Martian gravity (<code>3.71 m/s²</code>).</li>
+              <li><strong>🏜️ Sand &amp; Cold · THEMIS:</strong> Models loose drift sand slip (<code>TIU &lt; 100 ⇒ η = 1.85</code>) and shadowed suit heating draw (<code>165 K</code> vs. <code>235 K</code>).</li>
+              <li><strong>🪨 Sample Load · CRISM:</strong> Adds collected rock mass into total carried load (<code>82 + 50 + sample kg</code>) — uncheck or jettison samples in an emergency to regain range.</li>
+              <li><strong>💨 Wind Drag · MEDA:</strong> Applies directional katabatic headwind/tailwind drag (<code>8.5 m/s</code> flow).</li>
+              <li><strong>☀️ Radiation · RAD:</strong> Uses 36-azimuth canyon shielding (SVF) and live NASA DONKI SEP <code>36h</code> storm alerts (<code>14,500 µSv/hr</code> under solar storm).</li>
+            </ul>
+          </section>
+
+          <section class="ops-card">
+            <h3>4. Flight Dock View 1: Controls, Watch &amp; Crew Health</h3>
+            <ul class="guide-list">
+              <li><strong>⌚ Wayfinder Dial &amp; Sliders (Controls &amp; Watch):</strong> Outer 60-tick bezel tracks azimuth/EVA time and dual rings display O₂ and Battery/Calorie margins while you adjust Heart Rate (<code>60–190 BPM</code>), Suit + Sample Load (<code>50–120 kg</code>), Calorie Reserve (<code>300–2000 kcal</code>), collect <code>+15 kg</code> samples, or click <strong>Quick Waypoint Jump</strong>.</li>
+              <li><strong>⚡ 1Hz Low-Power Watch:</strong> Power-gates 3D WebGL2 rendering (<code>0.0 mW</code> GPU) and switches the chronometer to 1-bit Always-On mode, extending a <code>3V 220mAh</code> coin cell from <code>2.8 HRS</code> to <code>15.6 HRS</code>.</li>
+              <li><strong>🫀 Crew Health &amp; Safety Trend Drawer:</strong> Expanded inside Controls &amp; Watch by default to monitor Heart Strain (HRR% <code>&gt; 75%</code>), Blood Oxygen (<code>SpO₂</code>), Body Temp (<code>&gt; 37.5°C</code>), Suit CO₂ (<code>&gt; 2.5 mmHg</code>), and the rolling heart-rate vs. safe-distance trend chart.</li>
+            </ul>
+          </section>
+
+          <section class="ops-card">
+            <h3>5. Flight Dock View 2: Zero-GPS Horizon Deliverable</h3>
+            <ul class="guide-list">
+              <li><strong>🧭 Core Deliverable — Zero-GPS 360° Horizon &amp; Optical Compass:</strong> Because Mars has <strong>no GPS network</strong> and <strong>no global magnetic dipole field</strong> for compasses, BioRadius matches the visor’s 360° silhouette against orbital DEMs (<code>25×25</code> coarse LUT + Parseval-normalized <code>5×5</code> NCC yaw refinement) to lock both <code>(GX, GY)</code> coordinates and true-North heading — and reuses those same 36-azimuth horizon angles for Canyon Sky-View (<code>SVF</code>) radiation shielding. Click <code>ZERO-GPS</code> on the 3D HUD anytime to inspect it.</li>
+              <li><strong>🔍 Header Audits &amp; Provenance:</strong> Inspect live NASA WMTS/DONKI provenance via <code>📡 Data</code> and verify all 7 runtime physics invariants via <code>✅ 7/7 Verified</code> in the top bar.</li>
+            </ul>
+          </section>
+
+          <section class="ops-card">
+            <h3>6. Field Ops Console, Hardware Link &amp; Hotkeys</h3>
+            <ul class="guide-list">
+              <li><strong>Hotkeys <code>[1–4]</code>, <code>[?]</code> &amp; <code>[Esc]</code>:</strong> Replay the 4-Act EVA crisis story anytime (<code>1</code> Nominal TRN, <code>2</code> WP-3 Exceeded Red Zone, <code>3</code> DONKI SEP + 1Hz Eco, <code>4</code> Jezero Delta counterfactual ramp); press <code>?</code> or <code>Esc</code> to toggle between this manual and the 3D workspace.</li>
+              <li><strong>Field Ops (<code>🛰️ Field Ops</code> in Top Nav):</strong> Drag-and-drop custom <code>.asc</code>, <code>.csv</code>, or 16-bit <code>.raw</code> DEMs onto the 3D viewport, pair live BLE <code>0x180D</code> chest-strap BPM or device IMU/GPS heading, restore opt-in 1 Hz Black-Box sessions, and export <strong>RFC 7946 <code>.geojson</code></strong> (QGIS/MMGIS), <strong>GPX 1.1 <code>.gpx</code></strong>, or <strong>Flight Surgeon <code>.csv</code></strong> logs.</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Footer (28px) -->
+    <footer class="bottom-bar">
+      <span class="footer-hint mono-num">
+        Drag EVA Pin on 3D Terrain • Hotkeys [1–4]: 4-Act Demo • [?]: Astronaut EVA Guide
+      </span>
+      <div class="footer-actions">
+        <button type="button" id="sar-pill" class="sar-pill">
+          🌍 TERRESTRIAL SPINOFF READY: Click to inspect Earth Backcountry SAR Architecture
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal 1: Data Honesty & Provenance Dialog -->
+  <dialog id="provenance-dialog" class="glass-dialog">
+    <div class="dialog-header">
+      <h2>NASA Data Provenance &amp; Honesty Disclosure</h2>
+      <button type="button" class="dialog-close" data-close="provenance-dialog">✕</button>
+    </div>
+    <div id="provenance-dialog-body" class="dialog-body"></div>
+  </dialog>
+
+  <!-- Modal 2: Terrestrial Backcountry SAR Spinoff Dialog -->
+  <dialog id="sar-dialog" class="glass-dialog">
+    <div class="dialog-header">
+      <h2>Terrestrial Spinoff: Mars EVA → Earth Backcountry SAR</h2>
+      <button type="button" class="dialog-close" data-close="sar-dialog">✕</button>
+    </div>
+    <div class="dialog-body">
+      <p class="dialog-lead">
+        Every BioRadius flight-software module transfers directly to Earth Search &amp; Rescue, alpine mountaineering, and wildland firefighting on ultra-low-power wrist wearables.
+      </p>
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Subsystem</th>
+            <th>Mars EVA Architecture</th>
+            <th>Earth Backcountry SAR Spinoff</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Terrain &amp; Cutoff</td>
+            <td>HiRISE/MOLA 150×150 DEM (&gt;33° cliff cutoff)</td>
+            <td>USGS 1m LiDAR / SRTM DEM (avalanche &amp; scree cutoff)</td>
+          </tr>
+          <tr>
+            <td>Regolith &amp; Thermal</td>
+            <td>Odyssey THEMIS TIU slip η + SPICE solar shadow</td>
+            <td>MODIS Snow/Ice albedo &amp; wet-mud traction + windchill</td>
+          </tr>
+          <tr>
+            <td>Bioenergetics</td>
+            <td>Santee-Gernhardt (3.71 m/s²) + NASA-STD-3001 triage</td>
+            <td>Pandolf terrestrial load-carriage + hypothermia/altitude triage</td>
+          </tr>
+          <tr>
+            <td>GPS-Denied TRN</td>
+            <td>36-azimuth Mars-curvature DEM Skyline NCC (&lt;1.8 ms)</td>
+            <td>Canyon/under-canopy optical horizon silhouette lock (0 GPS)</td>
+          </tr>
+          <tr>
+            <td>Edge Power Budget</td>
+            <td>CR2032 1Hz Always-On Watch Mode (42.3 mW, 15.6 HRS)</td>
+            <td>Emergency wrist SOS beacon mode on single coin cell</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </dialog>
+
+  <!-- Modal 3: 7-Gate Startup Mathematical Audit Dialog -->
+  <dialog id="audit-dialog" class="glass-dialog">
+    <div class="dialog-header">
+      <h2>7-Gate Runtime Mathematical Verification Suite</h2>
+      <button type="button" class="dialog-close" data-close="audit-dialog">✕</button>
+    </div>
+    <div id="audit-dialog-body" class="dialog-body"></div>
+  </dialog>
+
+  <!-- Modal 4: Field Operations, Custom DEM Ingestion, Live Hardware & Exports -->
+  <dialog id="ops-dialog" class="glass-dialog ops-modal">
+    <div class="dialog-header">
+      <div class="ops-header-title">
+        <h2>🛰️ Field Ops Console: Custom DEM, BLE/IMU Telemetry &amp; Exports</h2>
+        <span class="ops-header-sub">Click any highlighted action button below to load maps, connect live suit/watch sensors, replay logs, or export mission files.</span>
+      </div>
+      <button type="button" class="dialog-close" data-close="ops-dialog" aria-label="Close Field Ops Console">✕</button>
+    </div>
+    <div class="dialog-body ops-dialog-body">
+      <div class="ops-grid">
+        <section class="ops-card">
+          <h3>
+            <span class="ops-step-badge">1</span>
+            <span>Custom DEM / Raster Ingestion</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain Custom DEM Ingestion">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>Custom Elevation Grids:</strong> Imports ASCII ESRI grids (<code>.asc</code>), matrix tables (<code>.csv</code>), or 16-bit rasters (<code>.raw</code>), bilinearly resamples them to <code>150×150</code>, and recomputes cliffs, solar shadows, and 36-azimuth horizons on the spot.
+              </span>
+            </span>
+          </h3>
+          <p class="ops-desc">
+            Resamples arbitrary <code>.ASC / .CSV / 16-bit .RAW</code> rasters into the <code>150×150</code> solver arena and rebuilds slopes, shadows, and 36-azimuth horizons.
+          </p>
+          <div id="dropzone-dem" class="ops-dropzone">
+            <strong>Drop .ASC, .CSV, or 16-bit .RAW here</strong>
+            <span>or choose an action below:</span>
+            <input type="file" id="input-custom-dem" accept=".asc,.grd,.csv,.txt,.raw,.bin,.img" hidden />
+            <div class="ops-btn-row">
+              <div class="ops-btn-item">
+                <button type="button" id="btn-choose-dem" class="hud-pill ops-action-btn ops-btn-primary">📂 Select Raster File…</button>
+                <span class="layer-info" tabindex="0" role="button" aria-label="Explain Select Raster File">
+                  i
+                  <span class="layer-tooltip" role="tooltip">
+                    <strong>Load Local Terrain File:</strong> Opens a local <code>.asc</code> (ESRI ASCII), <code>.csv</code> elevation matrix, or 16-bit <code>.raw</code> heightmap, resamples it to <code>150×150</code>, and switches the 3D terrain &amp; solver to <code>Custom DEM</code>.
+                  </span>
+                </span>
+              </div>
+              <div class="ops-btn-item">
+                <button type="button" id="btn-sample-dem" class="hud-pill ops-action-btn ops-btn-secondary">🗻 Load Sample Valles Marineris .ASC</button>
+                <span class="layer-info" tabindex="0" role="button" aria-label="Explain Sample Valles Marineris DEM">
+                  i
+                  <span class="layer-tooltip" role="tooltip">
+                    <strong>Load Built-In Canyon Sample:</strong> Loads a ready-to-test <code>160×160</code> Valles Marineris canyon ESRI <code>.asc</code> grid so you can verify custom DEM resampling, shadows, and horizons immediately without external files.
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div id="dem-ingest-status" class="ops-status mono-num">Built-in NASA PDS surrogate DEM active.</div>
+        </section>
+
+        <section class="ops-card">
+          <h3>
+            <span class="ops-step-badge">2</span>
+            <span>Live Hardware Telemetry vs. Planner Sim</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain Live BLE and IMU Telemetry">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>Real Sensor Streaming:</strong> Pair any Web Bluetooth <code>0x180D</code> heart-rate strap/watch to drive live metabolic burn, or link your device compass/GPS to lock Visor Skyline yaw.
+              </span>
+            </span>
+          </h3>
+          <p class="ops-desc">
+            Stream live heart rate via Web Bluetooth GATT (<code>0x180D</code> / <code>0x2A37</code>) or link compass IMU + geolocation to Visor Skyline heading. Manual sliders stay unlocked unless BLE is streaming.
+          </p>
+          <div class="ops-btn-row">
+            <div class="ops-btn-item">
+              <button type="button" id="btn-pair-ble" class="hud-pill ops-action-btn ops-btn-primary">🫀 Pair BLE Biometrics (0x180D)</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Pair BLE Biometrics">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Web Bluetooth Heart Rate (0x180D):</strong> Connects to a live BLE chest strap or watch broadcasting GATT characteristic <code>0x2A37</code> and locks the HR slider while streaming live BPM into the solver.
+                </span>
+              </span>
+            </div>
+            <div class="ops-btn-item">
+              <button type="button" id="btn-link-imu" class="hud-pill ops-action-btn ops-btn-secondary">🧭 Link IMU / Field GPS</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Link IMU and Field GPS">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Field Compass &amp; Local Frame:</strong> Links browser <code>DeviceOrientation</code> magnetometer heading and <code>Geolocation</code> deltas to rotate Zero-GPS Visor yaw and test earth-analog traverses live.
+                </span>
+              </span>
+            </div>
+          </div>
+          <div id="hw-mode-status" class="ops-status mono-num">🎛️ PLANNER SIM ACTIVE (Manual sliders unlocked)</div>
+        </section>
+
+        <section class="ops-card">
+          <h3>
+            <span class="ops-step-badge">3</span>
+            <span>Non-Volatile 1 Hz Black-Box Recorder</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain 1Hz Black-Box Recorder">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>Continuous Flight Recorder:</strong> Stores up to <code>3,600</code> frames (<code>1 hr</code> at 1 Hz) in <code>localStorage</code> with zero-GC ring buffering. Restoring is opt-in so startup benchmarks stay clean.
+              </span>
+            </span>
+          </h3>
+          <p class="ops-desc">
+            Logs 1 Hz telemetry frames (<code>UTC, GX/GY, HR, kcal, O2, batt, POSR%, limiter</code>) into a pre-allocated 3,600-frame ring buffer persisted locally.
+          </p>
+          <div class="ops-btn-row">
+            <div class="ops-btn-item">
+              <button type="button" id="btn-restore-eva" class="hud-pill ops-action-btn ops-btn-primary">Restore Last Saved EVA</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Restore Last Saved EVA">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Opt-In Session Replay:</strong> Restores your suit coordinates, heart rate, carry mass, calories, O₂, battery, and active Mars site from the most recent frame saved in <code>localStorage</code>.
+                </span>
+              </span>
+            </div>
+            <div class="ops-btn-item">
+              <button type="button" id="btn-clear-blackbox" class="hud-pill ops-action-btn ops-btn-danger">🧹 Clear Black-Box Log</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Clear Black-Box Log">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Reset Flight Recorder:</strong> Erases all buffered 1 Hz frames from memory and <code>localStorage['bioradius-blackbox-v1']</code>, keeping your current mission sliders unchanged.
+                </span>
+              </span>
+            </div>
+          </div>
+          <div id="blackbox-status" class="ops-status mono-num">0 frames buffered</div>
+        </section>
+
+        <section class="ops-card">
+          <h3>
+            <span class="ops-step-badge">4</span>
+            <span>Interoperable Ops Handoff Exports</span>
+            <span class="layer-info" tabindex="0" role="button" aria-label="Explain Interoperable Mission Exports">
+              i
+              <span class="layer-tooltip" role="tooltip">
+                <strong>GIS &amp; Flight Surgeon Downloads:</strong> Exports projected planetary coordinates (IAU Mars <code>R = 3,389.5 km</code>) ready for NASA/JPL MMGIS, QGIS, handheld GPS units, and medical review.
+              </span>
+            </span>
+          </h3>
+          <p class="ops-desc">
+            Download standard mission files directly from live safe contours, Dijkstra return backtraces, and the 1 Hz telemetry recorder (IAU Mars sphere <code>R = 3,389.5 km</code>).
+          </p>
+          <div class="ops-btn-row">
+            <div class="ops-btn-item">
+              <button type="button" id="btn-export-geojson" class="hud-pill ops-action-btn ops-btn-primary">🗺️ Safe Perimeter (.geojson)</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Safe Perimeter GeoJSON Export">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Download RFC 7946 GeoJSON:</strong> Exports live <code>T = 1.0</code> Point-of-Safe-Return and <code>T = 0.75</code> Caution contours, optimal return corridor, and habitat/suit markers for NASA MMGIS or QGIS.
+                </span>
+              </span>
+            </div>
+            <div class="ops-btn-item">
+              <button type="button" id="btn-export-gpx" class="hud-pill ops-action-btn ops-btn-secondary">🥾 Return Corridor (.gpx)</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Return Corridor GPX Export">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Download GPX 1.1 Route:</strong> Exports the energy-optimal Dijkstra return path with MOLA elevations and Base Habitat waypoint for handheld navigation devices.
+                </span>
+              </span>
+            </div>
+            <div class="ops-btn-item">
+              <button type="button" id="btn-export-csv" class="hud-pill ops-action-btn ops-btn-secondary">🩺 Flight Surgeon Log (.csv)</button>
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Flight Surgeon CSV Export">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Download 1 Hz Telemetry CSV:</strong> Exports timestamped UTC, position, HR, burn rate, calories, O₂, battery, POSR margin, and active resource limiter for flight-surgeon audit.
+                </span>
+              </span>
+            </div>
+          </div>
+          <div id="export-status" class="ops-status mono-num">Ready for GeoJSON (MMGIS/QGIS), GPX 1.1, and CSV handoff.</div>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="global-ui-tooltip" class="global-ui-tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
+
