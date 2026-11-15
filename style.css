@@ -874,10 +874,7 @@ body {
   border: 1px solid var(--border-strong);
   background: var(--card-subtle);
   color: var(--brand-badge-fg);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 10px;
   cursor: help;
   flex-shrink: 0;
   pointer-events: auto;
@@ -1744,15 +1741,90 @@ input[type="range"]::-webkit-slider-thumb {
   gap: 12px;
 }
 
+.guide-lede {
+  margin: 6px 0 0;
+  max-width: 74ch;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.guide-lede em {
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* Status legend strip — quick reference for SAFE / CAUTION / EXCEEDED */
+.guide-status-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.guide-status-chip {
+  --chip-color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  border-top: 2px solid var(--chip-color);
+  background: var(--card-surface);
+}
+
+.guide-status-chip .guide-status-name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--chip-color);
+}
+
+.guide-status-chip .guide-status-range {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+.guide-status-chip p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.chip-safe { --chip-color: #30d158; }
+.chip-caution { --chip-color: #ff9f0a; }
+.chip-exceeded { --chip-color: #ff453a; }
+
 .guide-list {
   margin: 0;
   padding-left: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 11px;
-  line-height: 1.45;
+  gap: 7px;
+  font-size: 11.5px;
+  line-height: 1.55;
   color: var(--text-secondary);
+}
+
+.guide-list li {
+  padding-left: 2px;
+}
+
+.guide-list li::marker {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.guide-section h3 .ui-icon {
+  width: 15px;
+  height: 15px;
+  color: var(--primary);
+}
+
+.guide-list li > .ui-icon {
+  margin-right: 5px;
 }
 
 .guide-swatch {
@@ -2282,5 +2354,41 @@ input[type="range"]::-webkit-slider-thumb {
   }
   .hud-top-left {
     max-width: calc(100% - 24px);
+  }
+}
+
+/* Guide page: stack status chips and single-column sections on narrow screens */
+@media (max-width: 860px) {
+  .guide-status-strip {
+    grid-template-columns: 1fr;
+  }
+  .guide-page-grid {
+    grid-template-columns: 1fr;
+  }
+  .guide-page {
+    padding: 12px 14px 20px;
+  }
+}
+
+/* Production polish */
+::selection {
+  background: rgba(10, 132, 255, 0.30);
+  color: inherit;
+}
+
+.guide-page {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-page {
+    scroll-behavior: auto;
+  }
+  .layer-info,
+  .hud-pill,
+  .seg-btn,
+  .ops-action-btn,
+  .layer-shader-btn {
+    transition: none;
   }
 }

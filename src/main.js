@@ -1235,7 +1235,7 @@ class BioRadiusApp {
             <th>
               Connection
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Live Connected vs Offline Backup">
-                i
+                ${iconSvg('info', 'ui-icon')}
                 <span class="layer-tooltip" role="tooltip">
                   <strong>Live Internet Connection:</strong><br>
                   • <strong>Live Connected:</strong> Your browser just downloaded fresh orbital imagery or solar-storm telemetry directly from NASA/JPL servers (browser image/data access permitted).<br>
@@ -1267,7 +1267,7 @@ class BioRadiusApp {
             <th>
               Data Type
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Built-In Sim vs Live + Sim">
-                i
+                ${iconSvg('info', 'ui-icon')}
                 <span class="layer-tooltip" role="tooltip">
                   <strong>Plain-Language Guide:</strong><br>
                   • <strong>Built-In Sim:</strong> Pre-packaged Mars terrain/weather model calibrated to real NASA mission data (<code>HiRISE/MOLA</code>, <code>THEMIS</code>, <code>CRISM</code>, <code>MEDA</code>) so everything runs instantly without huge file downloads.<br>
