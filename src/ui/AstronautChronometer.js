@@ -4,7 +4,17 @@
  * 360° DEM vs. Visor Skyline waveform, and 4-system NASA-STD-3001 triage sparklines with zero GC.
  */
 
+import { iconSvg } from './icons.js';
+
 const MAX_SPARK_SAMPLES = 90;
+
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
 
 function formatEvaClock(totalSeconds) {
   const s = Math.max(0, Math.floor(totalSeconds));
@@ -71,16 +81,21 @@ export class AstronautChronometer {
     if (!this.elHeroPill) return;
 
     this.elHeroPill.classList.remove('state-safe', 'state-caution', 'state-exceeded');
+    let statusIcon = 'check-circle';
+    let statusText = '';
     if (heroMetrics.status === 'EXCEEDED') {
       this.elHeroPill.classList.add('state-exceeded');
-      this.elHeroPill.textContent = `🚨 EXCEEDED SAFE RETURN — TURN BACK NOW (DEFICIT: -${heroMetrics.kcalDeficit} kcal / -${heroMetrics.o2DeficitPct}% O2)`;
+      statusIcon = 'alert-octagon';
+      statusText = `EXCEEDED SAFE RETURN — TURN BACK NOW (DEFICIT: -${heroMetrics.kcalDeficit} kcal / -${heroMetrics.o2DeficitPct}% O2)`;
     } else if (heroMetrics.status === 'CAUTION') {
       this.elHeroPill.classList.add('state-caution');
-      this.elHeroPill.textContent = '⚠️ CAUTION ZONE — APPROACHING TURNAROUND LIMIT';
+      statusIcon = 'alert-triangle';
+      statusText = 'CAUTION ZONE — APPROACHING TURNAROUND LIMIT';
     } else {
       this.elHeroPill.classList.add('state-safe');
-      this.elHeroPill.textContent = `✅ INSIDE SAFE RETURN (+${heroMetrics.marginPct}% MARGIN • ${heroMetrics.turnaroundDistKm.toFixed(2)} km TO TURNAROUND)`;
+      statusText = `INSIDE SAFE RETURN (+${heroMetrics.marginPct}% MARGIN • ${heroMetrics.turnaroundDistKm.toFixed(2)} km TO TURNAROUND)`;
     }
+    this.elHeroPill.innerHTML = `${iconSvg(statusIcon, 'ui-icon ui-icon-sm')} ${escapeHtml(statusText)}`;
 
     if (this.elHeroBurn && localTelemetry) {
       const kcalHr = Math.round(localTelemetry.kcalPerHr || 0);
@@ -493,25 +508,25 @@ export class AstronautChronometer {
       }
 
       let triageLabel = 'Normal';
-      let summaryIcon = '🫀';
+      let summaryIcon = 'heart';
       if (
         heroMetrics.status === 'EXCEEDED' ||
         localTelemetry.bioScalar >= 1.25 ||
         localTelemetry.hrr_pct >= 85
       ) {
         triageLabel = 'Critical Strain';
-        summaryIcon = '🚨';
+        summaryIcon = 'alert-octagon';
       } else if (
         heroMetrics.status === 'CAUTION' ||
         localTelemetry.bioScalar >= 1.06 ||
         localTelemetry.hrr_pct >= 65
       ) {
         triageLabel = 'Elevated Strain';
-        summaryIcon = '⚠️';
+        summaryIcon = 'alert-triangle';
       }
       if (this.elSummaryVitals) {
         const totalBurnMult = (localTelemetry.bioScalar || 1.0).toFixed(2);
-        this.elSummaryVitals.textContent = `${summaryIcon} Crew Health & Safety Trend: ${triageLabel} (${totalBurnMult}× burn)`;
+        this.elSummaryVitals.innerHTML = `${iconSvg(summaryIcon, 'ui-icon ui-icon-sm')} Crew Health & Safety Trend: ${escapeHtml(triageLabel)} (${totalBurnMult}× burn)`;
       }
     }
 

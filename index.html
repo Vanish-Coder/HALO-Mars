@@ -22,6 +22,43 @@
   </script>
 </head>
 <body class="light-mode">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <defs>
+      <symbol id="icon-watch" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 9v3l2 2"/><path d="M9 2h6"/><path d="M12 2v1"/></symbol>
+      <symbol id="icon-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+      <symbol id="icon-plug" viewBox="0 0 24 24"><path d="M9 2v4"/><path d="M15 2v4"/><path d="M6 6h12v3a6 6 0 0 1-12 0z"/><path d="M12 15v7"/></symbol>
+      <symbol id="icon-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></symbol>
+      <symbol id="icon-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-6"/></symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+      <symbol id="icon-alert-triangle" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+      <symbol id="icon-alert-octagon" viewBox="0 0 24 24"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+      <symbol id="icon-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+      <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+      <symbol id="icon-mountain" viewBox="0 0 24 24"><path d="M3 20l6-12 4 7 3-4 5 9H3z"/></symbol>
+      <symbol id="icon-thermometer" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></symbol>
+      <symbol id="icon-package" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+      <symbol id="icon-wind" viewBox="0 0 24 24"><path d="M9.59 4.59A2 2 0 1 1 11 8H2M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2M12.59 19.41A2 2 0 1 0 14 16H2"/></symbol>
+      <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><ellipse cx="12" cy="12" rx="4" ry="9"/></symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8V4z" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="3"/></symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></symbol>
+      <symbol id="icon-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></symbol>
+      <symbol id="icon-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M12 19h4.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H12"/></symbol>
+      <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+      <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+      <symbol id="icon-zap" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+      <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+      <symbol id="icon-gauge" viewBox="0 0 24 24"><path d="M12 15l4-6"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+    </defs>
+  </svg>
   <div id="app">
     <!-- Top Header Bar (48px) -->
     <header class="top-bar">
@@ -32,13 +69,13 @@
 
       <nav id="top-nav-tabs" class="segmented-control top-nav-tabs" role="tablist" aria-label="Primary Workspace Navigation">
         <button type="button" class="seg-btn dock-tab-btn active" role="tab" aria-selected="true" data-dock-tab="controls">
-          ⌚ Watch &amp; Vitals
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-watch"/></svg> Watch &amp; Vitals
         </button>
         <button type="button" class="seg-btn dock-tab-btn" role="tab" aria-selected="false" data-dock-tab="horizon" title="Supporting Optical Navigation: Zero-GPS 360° Camera Horizon &amp; Compass">
-          🧭 Zero-GPS Horizon
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-compass"/></svg> Zero-GPS Horizon
         </button>
         <button type="button" class="seg-btn" data-open-dialog="ops-dialog" title="Open Custom Maps, Device Connect &amp; Export">
-          🔌 Connect &amp; Export
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-plug"/></svg> Connect &amp; Export
         </button>
       </nav>
 
@@ -50,19 +87,19 @@
         </div>
 
         <button type="button" id="data-provenance-pill" class="hud-pill provenance-pill" title="Inspect NASA Live &amp; Built-In Data Sources">
-          📡 Data: Mars Sim (Offline)
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-radio"/></svg> Data: Mars Sim (Offline)
         </button>
 
         <button type="button" id="audit-pill" class="hud-pill audit-pill" title="Inspect System Check (7/7 Physics &amp; Math Gates)">
-          ✅ System Check
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-check-circle"/></svg> System Check
         </button>
 
         <button type="button" id="theme-toggle-btn" class="hud-pill theme-toggle-btn" title="Switch to Dark Mode" aria-label="Switch to Dark Mode" aria-pressed="true">
-          🌙
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
         </button>
 
         <button type="button" class="hud-pill primary-btn dock-tab-btn" data-dock-tab="guide" aria-selected="false" title="Open Full-Page Mars Survival Guide &amp; Map Manual (Hotkey: ?)">
-          📘 Mars Survival Guide
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-book"/></svg> Mars Survival Guide
         </button>
       </div>
     </header>
@@ -73,7 +110,7 @@
       <section id="viewport-stage" aria-label="3D Martian Terrain and Isochrone Viewport">
         <div id="three-canvas-host"></div>
         <div id="viewport-drop-overlay" class="viewport-drop-overlay" hidden>
-          <span>📂 Drop ESRI .ASC, PDS .CSV, or 16-bit .RAW DEM to ingest into 150×150 Solver Arena</span>
+          <span><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-upload"/></svg> Drop ESRI .ASC, PDS .CSV, or 16-bit .RAW DEM to ingest into 150×150 Solver Arena</span>
         </div>
 
         <!-- Top-Left Floating HUD Telemetry Pill -->
@@ -147,7 +184,7 @@
             </span>
           </div>
           <div id="active-layer-key" class="active-layer-key mono-num">
-            ⛰️ HiRISE: Rust/Ochre Relief • Red = &gt;33° Impassable Cliffs
+            <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-mountain"/></svg> HiRISE: Rust/Ochre Relief • Red = &gt;33° Impassable Cliffs
           </div>
           <div id="waypoint-pills" class="waypoint-pills"></div>
         </div>
@@ -161,7 +198,7 @@
               <button type="button" class="story-act-pill" data-story-act="2">Act 2 · Overload</button>
               <button type="button" class="story-act-pill" data-story-act="3">Act 3 · Storm &amp; 1Hz</button>
               <button type="button" class="story-act-pill" data-story-act="4">Act 4 · Jezero</button>
-              <button type="button" id="story-caption-close" class="story-caption-close" aria-label="Close story narration" title="Close story banner">✕</button>
+              <button type="button" id="story-caption-close" class="story-caption-close" aria-label="Close story narration" title="Close story banner"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-x"/></svg></button>
             </div>
           </div>
           <strong id="story-caption-title" class="story-caption-title">Act 1 · 5 Layered NASA Mars Maps &amp; Live Safe Return Zone</strong>
@@ -169,7 +206,7 @@
             BioRadius fuses 5 NASA datasets on Mount Sharp to compute the green Safe Zone (&lt;75% reserve), amber Caution ring, and blue energy-optimal Return Route back to Base.
           </p>
           <div id="story-caption-live" class="story-caption-live mono-num">
-            Now Showing Layer 1/5: ⛰️ HiRISE Steep Cliffs (&gt;33° impassable scarps blocked in red)
+            Now Showing Layer 1/5: HiRISE Steep Cliffs (&gt;33° impassable scarps blocked in red)
           </div>
           <div class="story-progress-track" aria-hidden="true">
             <div id="story-caption-progress" class="story-progress-fill"></div>
@@ -183,11 +220,11 @@
               <label class="layer-toggle" title="Toggle HiRISE Slope Cutoff (>33°) in Physics">
                 <input type="checkbox" data-physics="topo" checked />
               </label>
-              <button type="button" class="layer-shader-btn" data-shader="topo">⛰️ Steep Cliffs · HiRISE</button>
+              <button type="button" class="layer-shader-btn" data-shader="topo"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-mountain"/></svg> Steep Cliffs · HiRISE</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Steep Cliffs · HiRISE">
                 i
                 <span class="layer-tooltip" role="tooltip">
-                  <strong>Kept Selected (✓):</strong> Blocks impassable <code>&gt;33°</code> cliffs so routes detour safely, and scores uphill/downhill work at <code>3.71 m/s²</code>. Uncheck to ignore cliff barriers.<br>
+                  <strong>Kept Selected:</strong> Blocks impassable <code>&gt;33°</code> cliffs so routes detour safely, and scores uphill/downhill work at <code>3.71 m/s²</code>. Uncheck to ignore cliff barriers.<br>
                   <strong>Cells Blocked:</strong> Steep cliff grid cells forbidden for return routes.
                 </span>
               </span>
@@ -200,11 +237,11 @@
               <label class="layer-toggle" title="Toggle THEMIS Drift Sand &amp; Shadow Thermal in Physics">
                 <input type="checkbox" data-physics="themis" checked />
               </label>
-              <button type="button" class="layer-shader-btn" data-shader="themis">🏜️ Sand &amp; Cold · THEMIS</button>
+              <button type="button" class="layer-shader-btn" data-shader="themis"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-thermometer"/></svg> Sand &amp; Cold · THEMIS</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Sand &amp; Cold · THEMIS">
                 i
                 <span class="layer-tooltip" role="tooltip">
-                  <strong>Kept Selected (✓):</strong> Models loose drift sand slip (<code>TIU &lt; 100 ⇒ 1.85×</code>) and shadowed terrain cold (<code>165 K</code> vs <code>235 K</code>), raising burn &amp; heater power.<br>
+                  <strong>Kept Selected:</strong> Models loose drift sand slip (<code>TIU &lt; 100 ⇒ 1.85×</code>) and shadowed terrain cold (<code>165 K</code> vs <code>235 K</code>), raising burn &amp; heater power.<br>
                   <strong>-XX% Area:</strong> Safe return footprint lost compared to firm, warm terrain.
                 </span>
               </span>
@@ -217,11 +254,11 @@
               <label class="layer-toggle" title="Toggle CRISM Sample Mass Penalty in Physics">
                 <input type="checkbox" data-physics="crism" checked />
               </label>
-              <button type="button" class="layer-shader-btn" data-shader="crism">🪨 Sample Load · CRISM</button>
+              <button type="button" class="layer-shader-btn" data-shader="crism"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-package"/></svg> Sample Load · CRISM</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Sample Load · CRISM">
                 i
                 <span class="layer-tooltip" role="tooltip">
-                  <strong>Kept Selected (✓):</strong> Includes collected rock samples (<code>+15 kg</code> default) in carried mass. Uncheck to simulate <strong>emergency sample jettison</strong> to regain range.<br>
+                  <strong>Kept Selected:</strong> Includes collected rock samples (<code>+15 kg</code> default) in carried mass. Uncheck to simulate <strong>emergency sample jettison</strong> to regain range.<br>
                   <strong>-XX% Area:</strong> Safe return area penalty from carrying sample mass.
                 </span>
               </span>
@@ -234,11 +271,11 @@
               <label class="layer-toggle" title="Toggle REMS/MEDA CO2 Wind Drag in Physics">
                 <input type="checkbox" data-physics="meda" checked />
               </label>
-              <button type="button" class="layer-shader-btn" data-shader="meda">💨 Wind Drag · MEDA</button>
+              <button type="button" class="layer-shader-btn" data-shader="meda"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-wind"/></svg> Wind Drag · MEDA</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Wind Drag · MEDA">
                 i
                 <span class="layer-tooltip" role="tooltip">
-                  <strong>Kept Selected (✓):</strong> Applies directional <code>8.5 m/s</code> Martian wind drag &amp; convective heat loss across exposed ridges.<br>
+                  <strong>Kept Selected:</strong> Applies directional <code>8.5 m/s</code> Martian wind drag &amp; convective heat loss across exposed ridges.<br>
                   <strong>XX% Area:</strong> Net safe-area shift caused by Mars atmospheric wind drag.
                 </span>
               </span>
@@ -251,11 +288,11 @@
               <label class="layer-toggle" title="Toggle RAD/DONKI Radiation Dose in Physics">
                 <input type="checkbox" data-physics="rad" checked />
               </label>
-              <button type="button" class="layer-shader-btn" data-shader="rad">☀️ Radiation · RAD</button>
+              <button type="button" class="layer-shader-btn" data-shader="rad"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-sun"/></svg> Radiation · RAD</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Radiation · RAD">
                 i
                 <span class="layer-tooltip" role="tooltip">
-                  <strong>Kept Selected (✓):</strong> Enforces radiation limits (<code>µSv/hr</code>) using 36-azimuth Canyon Sky-View (<code>SVF</code>) rock shielding — preferring sheltered walls during DONKI solar storms.<br>
+                  <strong>Kept Selected:</strong> Enforces radiation limits (<code>µSv/hr</code>) using 36-azimuth Canyon Sky-View (<code>SVF</code>) rock shielding — preferring sheltered walls during DONKI solar storms.<br>
                   <strong>Nominal (0% Area):</strong> Sun is quiet; turns active/shrinks range during SEP storms.
                 </span>
               </span>
@@ -267,7 +304,7 @@
         <!-- Low-Power Eco Overlay when GPU Power-Gated (Key 3 / Eco Toggle) -->
         <div id="eco-overlay" class="eco-overlay hidden" aria-hidden="true">
           <div class="eco-overlay-card">
-            <span class="eco-badge">⚡ 1HZ BATTERY SAVER ACTIVE</span>
+            <span class="eco-badge"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-zap"/></svg> 1HZ BATTERY SAVER ACTIVE</span>
             <strong>3D Map Paused to Save Power (0.0 mW GPU)</strong>
             <p class="mono-num">14.1 mA / 42.3 mW → 15.6 HRS ON ONE COIN-CELL BATTERY</p>
             <button type="button" id="eco-resume-btn" class="hud-pill primary-btn">Resume 60 Hz 3D View</button>
@@ -292,7 +329,7 @@
             </span>
           </div>
           <div id="hero-status-pill" class="hero-status-pill state-safe">
-            ✅ INSIDE SAFE RETURN (+XX% MARGIN • X.XX km TO TURNAROUND)
+            <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-check-circle"/></svg> INSIDE SAFE RETURN (+XX% MARGIN • X.XX km TO TURNAROUND)
           </div>
           <div class="hero-submetrics mono-num">
             <span id="hero-burn-rate">Burn: -- kcal/hr</span>
@@ -316,14 +353,14 @@
               <div class="watch-side-controls">
                 <div class="watch-btn-row">
                   <button type="button" id="eco-toggle-btn" class="eco-toggle-btn" aria-pressed="false">
-                    ⚡ 1Hz Low-Power Watch
+                    <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-zap"/></svg> 1Hz Low-Power Watch
                   </button>
                   <span class="layer-info" tabindex="0" role="button" aria-label="Explain Wayfinder Watch and 1Hz Eco Mode">
                     i
                     <span class="layer-tooltip" role="tooltip">
                       <strong>Wrist Watch &amp; Battery Saver:</strong><br>
                       • Shows your mission timer, remaining <code>O₂</code> and battery rings, and an orange <code>Home</code> dot on the outer bezel pointing straight back to Base.<br>
-                      • <strong>⚡ 1Hz Battery Saver (Eco Mode):</strong> Pauses the 3D map graphics (<code>0 mW GPU</code>) and updates the watch screen once per second—stretching battery life from <strong>2.8 hours to 15.6 hours</strong> on a single coin-cell battery during an emergency.
+                      • <strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-zap"/></svg> 1Hz Battery Saver (Eco Mode):</strong> Pauses the 3D map graphics (<code>0 mW GPU</code>) and updates the watch screen once per second—stretching battery life from <strong>2.8 hours to 15.6 hours</strong> on a single coin-cell battery during an emergency.
                     </span>
                   </span>
                 </div>
@@ -388,7 +425,7 @@
 
             <div class="sample-btn-row">
               <button type="button" id="btn-collect-sample" class="sample-btn">
-                ⛏️ Collect +15 kg Core Sample
+                <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-package"/></svg> Collect +15 kg Core Sample
               </button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Collect Core Sample">
                 i
@@ -414,7 +451,7 @@
 
           <details id="drawer-vitals" class="bento-accordion" open>
             <summary id="summary-vitals" class="mono-num">
-              🫀 Crew Health &amp; Safety Trend: Normal
+              <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-heart"/></svg> Crew Health &amp; Safety Trend: Normal
             </summary>
             <div class="drawer-body">
               <div id="vitals-grid" class="vitals-grid">
@@ -481,7 +518,7 @@
             <div class="drawer-body">
               <div class="deliverable-callout">
                 <div class="deliverable-tag">
-                  <span>🧭 OPTICAL NAVIGATION • ZERO-GPS 360° HORIZON &amp; COMPASS</span>
+                  <span><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-compass"/></svg> OPTICAL NAVIGATION • ZERO-GPS 360° HORIZON &amp; COMPASS</span>
                   <span class="layer-info" tabindex="0" role="button" aria-label="Explain Zero-GPS Terrain Matching">
                     i
                     <span class="layer-tooltip" role="tooltip">
@@ -559,7 +596,7 @@
         <header class="guide-page-header bento-card">
           <div>
             <div class="deliverable-tag">INTERPLANETARY SURVIVAL GUIDE • MARTIAN MAP</div>
-            <h1 class="guide-page-title">📘 Martian Map &amp; Explorer Survival Guide</h1>
+            <h1 class="guide-page-title"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-book"/></svg> Martian Map &amp; Explorer Survival Guide</h1>
             <p class="dialog-lead">
               <strong>Mission Map Summary:</strong> BioRadius is a layered NASA Mars map that computes a live Point of Safe Return so explorers can plan science walks and still get home — continuously answering <em>“Am I still inside the safe return radius, and which terrain, suit, or environmental factor must change?”</em>
             </p>
@@ -593,28 +630,28 @@
             <h3>3. Five NASA Terrain Layers (Bottom Bar)</h3>
             <p class="ops-desc">Each pill switches the 3D terrain coloring, toggles that hazard in route planning, and measures live safe-area impact:</p>
             <ul class="guide-list">
-              <li><strong>⛰️ Steep Cliffs · HiRISE:</strong> Blocks impassable <code>&gt; 33.0°</code> scarps and models uphill vs. downhill work under Martian gravity (<code>3.71 m/s²</code>).</li>
-              <li><strong>🏜️ Sand &amp; Cold · THEMIS:</strong> Models loose drift sand slip (<code>TIU &lt; 100 ⇒ η = 1.85</code>) and shadowed suit heating draw (<code>165 K</code> vs. <code>235 K</code>).</li>
-              <li><strong>🪨 Sample Load · CRISM:</strong> Adds collected rock mass into total carried load (<code>82 + 50 + sample kg</code>) — uncheck or jettison samples in an emergency to regain range.</li>
-              <li><strong>💨 Wind Drag · MEDA:</strong> Applies directional katabatic headwind/tailwind drag (<code>8.5 m/s</code> flow).</li>
-              <li><strong>☀️ Radiation · RAD:</strong> Uses 36-azimuth canyon shielding (SVF) and live NASA DONKI SEP <code>36h</code> storm alerts (<code>14,500 µSv/hr</code> under solar storm).</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-mountain"/></svg> Steep Cliffs · HiRISE:</strong> Blocks impassable <code>&gt; 33.0°</code> scarps and models uphill vs. downhill work under Martian gravity (<code>3.71 m/s²</code>).</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-thermometer"/></svg> Sand &amp; Cold · THEMIS:</strong> Models loose drift sand slip (<code>TIU &lt; 100 ⇒ η = 1.85</code>) and shadowed suit heating draw (<code>165 K</code> vs. <code>235 K</code>).</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-package"/></svg> Sample Load · CRISM:</strong> Adds collected rock mass into total carried load (<code>82 + 50 + sample kg</code>) — uncheck or jettison samples in an emergency to regain range.</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-wind"/></svg> Wind Drag · MEDA:</strong> Applies directional katabatic headwind/tailwind drag (<code>8.5 m/s</code> flow).</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-sun"/></svg> Radiation · RAD:</strong> Uses 36-azimuth canyon shielding (SVF) and live NASA DONKI SEP <code>36h</code> storm alerts (<code>14,500 µSv/hr</code> under solar storm).</li>
             </ul>
           </section>
 
           <section class="ops-card">
             <h3>4. Flight Dock View 1: Watch, Sliders &amp; Crew Vitals</h3>
             <ul class="guide-list">
-              <li><strong>⌚ Wayfinder Dial &amp; Sliders (Watch &amp; Vitals):</strong> Outer 60-tick bezel tracks mission timer &amp; orange <code>Home</code> direction and dual rings display O₂ and Battery/Calorie reserves while you adjust Heart Rate (<code>60–190 BPM</code>), Suit + Sample Load (<code>50–120 kg</code>), Calorie Reserve (<code>300–2000 kcal</code>), collect <code>+15 kg</code> samples, or click <strong>Quick Waypoint Jump</strong>.</li>
-              <li><strong>⚡ 1Hz Low-Power Watch (Battery Saver):</strong> Pauses the 3D map graphics (<code>0.0 mW GPU</code>) and switches the watch screen to a once-per-second emergency mode, stretching coin-cell battery life from <code>2.8 HRS</code> to <code>15.6 HRS</code>.</li>
-              <li><strong>🫀 Crew Health &amp; Safety Trend Drawer:</strong> Expanded inside Watch &amp; Vitals by default to monitor Heart Strain (HRR% <code>&gt; 75%</code>), Blood Oxygen (<code>SpO₂</code>), Body Temp (<code>&gt; 37.5°C</code>), Suit CO₂ (<code>&gt; 2.5 mmHg</code>), and the rolling heart-rate vs. safe-distance trend chart.</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-watch"/></svg> Wayfinder Dial &amp; Sliders (Watch &amp; Vitals):</strong> Outer 60-tick bezel tracks mission timer &amp; orange <code>Home</code> direction and dual rings display O₂ and Battery/Calorie reserves while you adjust Heart Rate (<code>60–190 BPM</code>), Suit + Sample Load (<code>50–120 kg</code>), Calorie Reserve (<code>300–2000 kcal</code>), collect <code>+15 kg</code> samples, or click <strong>Quick Waypoint Jump</strong>.</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-zap"/></svg> 1Hz Low-Power Watch (Battery Saver):</strong> Pauses the 3D map graphics (<code>0.0 mW GPU</code>) and switches the watch screen to a once-per-second emergency mode, stretching coin-cell battery life from <code>2.8 HRS</code> to <code>15.6 HRS</code>.</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-heart"/></svg> Crew Health &amp; Safety Trend Drawer:</strong> Expanded inside Watch &amp; Vitals by default to monitor Heart Strain (HRR% <code>&gt; 75%</code>), Blood Oxygen (<code>SpO₂</code>), Body Temp (<code>&gt; 37.5°C</code>), Suit CO₂ (<code>&gt; 2.5 mmHg</code>), and the rolling heart-rate vs. safe-distance trend chart.</li>
             </ul>
           </section>
 
           <section class="ops-card">
             <h3>5. Flight Dock View 2: Optical Navigation Support (Zero-GPS Horizon)</h3>
             <ul class="guide-list">
-              <li><strong>🧭 Optical Navigation Layer — Zero-GPS 360° Horizon &amp; Compass:</strong> Because Mars has <strong>no GPS network</strong> and <strong>no global magnetic dipole field</strong> for compasses, BioRadius matches the visor’s 360° silhouette against orbital DEMs (<code>25×25</code> coarse LUT + Parseval-normalized <code>5×5</code> NCC yaw refinement) to lock both <code>(GX, GY)</code> coordinates and true-North heading — and reuses those same 36-azimuth horizon angles for Canyon Sky-View (<code>SVF</code>) radiation shielding. Click <code>ZERO-GPS</code> on the 3D HUD anytime to inspect it.</li>
-              <li><strong>🔍 Header Audits &amp; Provenance:</strong> Inspect live NASA WMTS/DONKI provenance via <code>📡 Data</code> and verify all 7 runtime physics invariants via <code>✅ System Check</code> in the top bar.</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-compass"/></svg> Optical Navigation Layer — Zero-GPS 360° Horizon &amp; Compass:</strong> Because Mars has <strong>no GPS network</strong> and <strong>no global magnetic dipole field</strong> for compasses, BioRadius matches the visor’s 360° silhouette against orbital DEMs (<code>25×25</code> coarse LUT + Parseval-normalized <code>5×5</code> NCC yaw refinement) to lock both <code>(GX, GY)</code> coordinates and true-North heading — and reuses those same 36-azimuth horizon angles for Canyon Sky-View (<code>SVF</code>) radiation shielding. Click <code>ZERO-GPS</code> on the 3D HUD anytime to inspect it.</li>
+              <li><strong><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-gauge"/></svg> Header Audits &amp; Provenance:</strong> Inspect live NASA WMTS/DONKI provenance via <code>Data</code> and verify all 7 runtime physics invariants via <code>System Check</code> in the top bar.</li>
             </ul>
           </section>
 
@@ -622,7 +659,7 @@
             <h3>6. Custom Maps, Live Devices &amp; Hotkeys</h3>
             <ul class="guide-list">
               <li><strong>Hotkeys <code>[1–4]</code>, <code>[?]</code> &amp; <code>[Esc]</code>:</strong> Replay the 4-Act EVA crisis story anytime (<code>1</code> Nominal TRN, <code>2</code> WP-3 Exceeded Red Zone, <code>3</code> DONKI SEP + 1Hz Eco, <code>4</code> Jezero Delta counterfactual ramp); press <code>?</code> or <code>Esc</code> to toggle between this manual and the 3D workspace.</li>
-              <li><strong>Connect &amp; Export (<code>🔌 Connect &amp; Export</code> in Top Nav):</strong> Drag-and-drop custom <code>.asc</code>, <code>.csv</code>, or 16-bit <code>.raw</code> elevation maps onto the 3D viewport, connect a Bluetooth heart-rate strap or device compass/GPS, restore your last saved session, and download <strong>Safe Zone Map (<code>.geojson</code>)</strong>, <strong>Return Route (<code>.gpx</code>)</strong>, or <strong>Health &amp; Energy Log (<code>.csv</code>)</strong> files.</li>
+              <li><strong>Connect &amp; Export (<code>Connect &amp; Export</code> in Top Nav):</strong> Drag-and-drop custom <code>.asc</code>, <code>.csv</code>, or 16-bit <code>.raw</code> elevation maps onto the 3D viewport, connect a Bluetooth heart-rate strap or device compass/GPS, restore your last saved session, and download <strong>Safe Zone Map (<code>.geojson</code>)</strong>, <strong>Return Route (<code>.gpx</code>)</strong>, or <strong>Health &amp; Energy Log (<code>.csv</code>)</strong> files.</li>
             </ul>
           </section>
         </div>
@@ -636,10 +673,10 @@
       </span>
       <div class="footer-actions">
         <button type="button" id="play-story-btn" class="hud-pill primary-btn" title="Play 30-Second 4-Act Story (Hotkeys 1–4)">
-          ▶ Play 30s Story
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-play"/></svg> Play 30s Story
         </button>
         <button type="button" id="sar-pill" class="sar-pill">
-          🌍 Earth Search &amp; Rescue Spinoff: Marswalk Planner → Backcountry SAR
+          <svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-globe"/></svg> Earth Search &amp; Rescue Spinoff: Marswalk Planner → Backcountry SAR
         </button>
       </div>
     </footer>
@@ -649,7 +686,7 @@
   <dialog id="provenance-dialog" class="glass-dialog">
     <div class="dialog-header">
       <h2>NASA Data</h2>
-      <button type="button" class="dialog-close" data-close="provenance-dialog">✕</button>
+      <button type="button" class="dialog-close" data-close="provenance-dialog"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-x"/></svg></button>
     </div>
     <div id="provenance-dialog-body" class="dialog-body"></div>
   </dialog>
@@ -658,7 +695,7 @@
   <dialog id="sar-dialog" class="glass-dialog">
     <div class="dialog-header">
       <h2>Terrestrial Spinoff: Marswalk Planner → Earth Backcountry SAR</h2>
-      <button type="button" class="dialog-close" data-close="sar-dialog">✕</button>
+      <button type="button" class="dialog-close" data-close="sar-dialog"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-x"/></svg></button>
     </div>
     <div class="dialog-body">
       <p class="dialog-lead">
@@ -707,7 +744,7 @@
   <dialog id="audit-dialog" class="glass-dialog">
     <div class="dialog-header">
       <h2>7-Gate Runtime Mathematical Verification Suite</h2>
-      <button type="button" class="dialog-close" data-close="audit-dialog">✕</button>
+      <button type="button" class="dialog-close" data-close="audit-dialog"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-x"/></svg></button>
     </div>
     <div id="audit-dialog-body" class="dialog-body"></div>
   </dialog>
@@ -716,10 +753,10 @@
   <dialog id="ops-dialog" class="glass-dialog ops-modal">
     <div class="dialog-header">
       <div class="ops-header-title">
-        <h2>🔌 Custom Maps, Device Connect &amp; Export</h2>
+        <h2><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-plug"/></svg> Custom Maps, Device Connect &amp; Export</h2>
         <span class="ops-header-sub">Upload custom terrain maps, connect a Bluetooth heart-rate watch or device compass, restore your last saved walk, or download mission files.</span>
       </div>
-      <button type="button" class="dialog-close" data-close="ops-dialog" aria-label="Close Custom Maps, Device Connect and Export">✕</button>
+      <button type="button" class="dialog-close" data-close="ops-dialog" aria-label="Close Custom Maps, Device Connect and Export"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-x"/></svg></button>
     </div>
     <div class="dialog-body ops-dialog-body">
       <div class="ops-grid">
@@ -743,7 +780,7 @@
             <input type="file" id="input-custom-dem" accept=".asc,.grd,.csv,.txt,.raw,.bin,.img" hidden />
             <div class="ops-btn-row">
               <div class="ops-btn-item">
-                <button type="button" id="btn-choose-dem" class="hud-pill ops-action-btn ops-btn-primary">📂 Upload Terrain Map…</button>
+                <button type="button" id="btn-choose-dem" class="hud-pill ops-action-btn ops-btn-primary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-upload"/></svg> Upload Terrain Map…</button>
                 <span class="layer-info" tabindex="0" role="button" aria-label="Explain Upload Terrain Map">
                   i
                   <span class="layer-tooltip" role="tooltip">
@@ -752,7 +789,7 @@
                 </span>
               </div>
               <div class="ops-btn-item">
-                <button type="button" id="btn-sample-dem" class="hud-pill ops-action-btn ops-btn-secondary">🗻 Try Sample Canyon Map</button>
+                <button type="button" id="btn-sample-dem" class="hud-pill ops-action-btn ops-btn-secondary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-mountain"/></svg> Try Sample Canyon Map</button>
                 <span class="layer-info" tabindex="0" role="button" aria-label="Explain Sample Canyon Map">
                   i
                   <span class="layer-tooltip" role="tooltip">
@@ -781,7 +818,7 @@
           </p>
           <div class="ops-btn-row">
             <div class="ops-btn-item">
-              <button type="button" id="btn-pair-ble" class="hud-pill ops-action-btn ops-btn-primary">🫀 Connect Heart Rate (Bluetooth)</button>
+              <button type="button" id="btn-pair-ble" class="hud-pill ops-action-btn ops-btn-primary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-heart"/></svg> Connect Heart Rate (Bluetooth)</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Bluetooth Heart Rate Connect">
                 i
                 <span class="layer-tooltip" role="tooltip">
@@ -790,7 +827,7 @@
               </span>
             </div>
             <div class="ops-btn-item">
-              <button type="button" id="btn-link-imu" class="hud-pill ops-action-btn ops-btn-secondary">🧭 Connect Compass &amp; GPS</button>
+              <button type="button" id="btn-link-imu" class="hud-pill ops-action-btn ops-btn-secondary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-compass"/></svg> Connect Compass &amp; GPS</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Connect Compass and GPS">
                 i
                 <span class="layer-tooltip" role="tooltip">
@@ -799,7 +836,7 @@
               </span>
             </div>
           </div>
-          <div id="hw-mode-status" class="ops-status mono-num">🎛️ Simulation Mode Active (Manual sliders unlocked)</div>
+          <div id="hw-mode-status" class="ops-status mono-num"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-sliders"/></svg> Simulation Mode Active (Manual sliders unlocked)</div>
         </section>
 
         <section class="ops-card">
@@ -827,7 +864,7 @@
               </span>
             </div>
             <div class="ops-btn-item">
-              <button type="button" id="btn-clear-blackbox" class="hud-pill ops-action-btn ops-btn-danger">🧹 Clear Saved History</button>
+              <button type="button" id="btn-clear-blackbox" class="hud-pill ops-action-btn ops-btn-danger"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-trash"/></svg> Clear Saved History</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Clear Saved History">
                 i
                 <span class="layer-tooltip" role="tooltip">
@@ -855,7 +892,7 @@
           </p>
           <div class="ops-btn-row">
             <div class="ops-btn-item">
-              <button type="button" id="btn-export-geojson" class="hud-pill ops-action-btn ops-btn-primary">🗺️ Safe Zone Map (.geojson)</button>
+              <button type="button" id="btn-export-geojson" class="hud-pill ops-action-btn ops-btn-primary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-map"/></svg> Safe Zone Map (.geojson)</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Safe Zone Map Export">
                 i
                 <span class="layer-tooltip" role="tooltip">
@@ -864,7 +901,7 @@
               </span>
             </div>
             <div class="ops-btn-item">
-              <button type="button" id="btn-export-gpx" class="hud-pill ops-action-btn ops-btn-secondary">🥾 Return Route (.gpx)</button>
+              <button type="button" id="btn-export-gpx" class="hud-pill ops-action-btn ops-btn-secondary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-route"/></svg> Return Route (.gpx)</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Return Route GPX Export">
                 i
                 <span class="layer-tooltip" role="tooltip">
@@ -873,7 +910,7 @@
               </span>
             </div>
             <div class="ops-btn-item">
-              <button type="button" id="btn-export-csv" class="hud-pill ops-action-btn ops-btn-secondary">🩺 Health &amp; Energy Log (.csv)</button>
+              <button type="button" id="btn-export-csv" class="hud-pill ops-action-btn ops-btn-secondary"><svg class="ui-icon" viewBox="0 0 24 24"><use href="#icon-activity"/></svg> Health &amp; Energy Log (.csv)</button>
               <span class="layer-info" tabindex="0" role="button" aria-label="Explain Health and Energy CSV Export">
                 i
                 <span class="layer-tooltip" role="tooltip">
