@@ -40,6 +40,27 @@ const BLACKBOX_STORAGE_KEY = 'bioradius-blackbox-v1';
 const BLACKBOX_CAP = 3600;
 const LIMITER_CODES = ['BIO', 'O2', 'BATT', 'RAD'];
 const SITE_CODES = ['MOUNT_SHARP_BOXWORK', 'JEZERO_DELTA', 'CUSTOM_MISSION_DEM'];
+const LAYER_COLOR_KEYS = {
+  topo: '⛰️ HiRISE: Rust/Ochre Relief • Red = >33° Impassable Cliffs',
+  themis: '🏜️ THEMIS: Gold = Loose Drift Sand • Cool Blue = Solid Rock & Frost',
+  crism: '🪨 CRISM: Dark Teal = Low • Green → Magenta = Hydrated Minerals',
+  meda: '💨 MEDA: Ice Cyan = High Katabatic Wind • Dark = Sheltered Lee',
+  rad: '☀️ RAD: Deep Indigo = Canyon Shelter (SVF) • Magenta/Red = Exposed Plain'
+};
+const STORY_ACT1_LAYER_NOTES = {
+  topo: 'Now Showing Layer 1/5: ⛰️ HiRISE Steep Cliffs — red slopes (>33°) are blocked so routes detour safely.',
+  themis: 'Now Showing Layer 2/5: 🏜️ THEMIS Loose Sand — gold drift traps burn extra leg energy vs. cool blue bedrock.',
+  crism: 'Now Showing Layer 3/5: 🪨 CRISM Hydrated Clay — highlights clay science outcrops & surface dust drag.',
+  meda: 'Now Showing Layer 4/5: 💨 MEDA Slope Wind — visualizes katabatic headwinds vs. calm canyon lee.',
+  rad: 'Now Showing Layer 5/5: ☀️ RAD Shielding — compares canyon wall radiation shelter vs. exposed plains.'
+};
+const STORY_LAYER_SHORT_LABELS = {
+  topo: 'HiRISE Cliffs',
+  themis: 'THEMIS Sand/Thermal',
+  crism: 'CRISM Hydrated Clay',
+  meda: 'MEDA Slope Wind',
+  rad: 'RAD Shielding'
+};
 
 /**
  * Decodes standard Bluetooth GATT 0x2A37 Heart Rate Measurement characteristics.
@@ -152,6 +173,7 @@ class BioRadiusApp {
     this.bindUiEvents();
     this.applyThemeFromScheme(false);
     this.renderWaypointPills();
+    this.syncLayerUi();
     this.syncControlsFromState();
 
     // Execute initial solve, contours, skyline TRN lock, and counterfactual attribution
@@ -189,6 +211,14 @@ class BioRadiusApp {
       auditPill: document.getElementById('audit-pill'),
       themeToggleBtn: document.getElementById('theme-toggle-btn'),
       playStoryBtn: document.getElementById('play-story-btn'),
+      storyBanner: document.getElementById('story-caption-banner'),
+      storyKicker: document.getElementById('story-caption-kicker'),
+      storyTitle: document.getElementById('story-caption-title'),
+      storyBody: document.getElementById('story-caption-body'),
+      storyLive: document.getElementById('story-caption-live'),
+      storyProgress: document.getElementById('story-caption-progress'),
+      storyCloseBtn: document.getElementById('story-caption-close'),
+      storyActPills: Array.from(document.querySelectorAll('[data-story-act]')),
       hudPinCoords: document.getElementById('hud-pin-coords'),
       hudElevRad: document.getElementById('hud-elev-rad'),
       hudSolverMs: document.getElementById('hud-solver-ms'),
@@ -198,6 +228,7 @@ class BioRadiusApp {
       layerPills: Array.from(document.querySelectorAll('#layer-bar .layer-pill')),
       layerShaderBtns: Array.from(document.querySelectorAll('#layer-bar .layer-shader-btn')),
       layerPhysicsBoxes: Array.from(document.querySelectorAll('#layer-bar input[data-physics]')),
+      activeLayerKey: document.getElementById('active-layer-key'),
       impactBadges: {
         topo: document.getElementById('impact-topo'),
         themis: document.getElementById('impact-themis'),
@@ -285,6 +316,7 @@ class BioRadiusApp {
         this.interruptStory();
         const key = box.dataset.physics;
         this.state.layers[key] = box.checked;
+        this.state.activeLayer = key;
         this.syncLayerUi();
         this.scheduleSolve({ forcePass1: true, refreshAttribution: true, skipSkyline: true });
       });
@@ -354,13 +386,23 @@ class BioRadiusApp {
       this.applyThemeFromScheme(true);
     });
 
-    // Story Mode Play Button & Hotkeys 1–4
+    // Story Mode Play Button, Interactive Story Chapters & Hotkeys 1–4
     this.dom.playStoryBtn.addEventListener('click', () => {
       if (this._storyRunning) {
         this.interruptStory();
       } else {
         this.play30sStory();
       }
+    });
+    if (this.dom.storyCloseBtn) {
+      this.dom.storyCloseBtn.addEventListener('click', () => this.interruptStory());
+    }
+    this.dom.storyActPills.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const actNum = Number(btn.dataset.storyAct);
+        this.interruptStory();
+        this.runStoryAct(actNum, { animateRamp: true });
+      });
     });
 
     window.addEventListener('keydown', (ev) => {
@@ -847,6 +889,15 @@ class BioRadiusApp {
     this.dom.layerPhysicsBoxes.forEach((box) => {
       box.checked = !!this.state.layers[box.dataset.physics];
     });
+    if (this.dom.activeLayerKey) {
+      const key = this.state.activeLayer || 'topo';
+      const isEnabled = this.state.layers[key] !== false;
+      const baseDesc = LAYER_COLOR_KEYS[key] || LAYER_COLOR_KEYS.topo;
+      this.dom.activeLayerKey.textContent = isEnabled
+        ? baseDesc
+        : `${baseDesc} (Bypassed in Route)`;
+      this.dom.activeLayerKey.classList.toggle('is-bypassed', !isEnabled);
+    }
   }
 
   syncControlsFromState() {
@@ -947,8 +998,11 @@ class BioRadiusApp {
       document.body.classList.toggle('light-mode', isLight);
     }
     if (this.dom.themeToggleBtn) {
-      this.dom.themeToggleBtn.textContent = isLight ? '🌙 Dark Mode' : '☀️ Lite Mode';
+      const nextModeLabel = isLight ? 'Switch to Dark Mode' : 'Switch to Lite Mode';
+      this.dom.themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
       this.dom.themeToggleBtn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+      this.dom.themeToggleBtn.setAttribute('aria-label', nextModeLabel);
+      this.dom.themeToggleBtn.title = nextModeLabel;
     }
     if (this.map3d) {
       this.map3d.setTheme(isLight);
@@ -1093,8 +1147,8 @@ class BioRadiusApp {
     const rep = this.auditReport;
     if (this.dom.auditPill) {
       this.dom.auditPill.textContent = rep.allPassed
-        ? `✅ ${rep.passedCount}/${rep.totalCount} Verified`
-        : `⚠️ ${rep.passedCount}/${rep.totalCount} Audit Alert`;
+        ? '✅ System Check'
+        : `⚠️ System Check (${rep.passedCount}/${rep.totalCount})`;
       this.dom.auditPill.classList.toggle('is-fail', !rep.allPassed);
     }
 
@@ -1132,15 +1186,26 @@ class BioRadiusApp {
   renderProvenanceDialog() {
     if (!this.dom.provenanceDialogBody) return;
     const snap = this.liveClient.getProvenanceSnapshot();
+    const friendlyModeNote = snap.customDemActive
+      ? 'Using your uploaded terrain map with BioRadius physics'
+      : snap.trekLive && snap.donkiLive
+        ? 'Connected to live NASA orbital map + live solar-storm feed, paired with built-in Mars terrain layers'
+        : snap.donkiLive
+          ? 'Connected to live NASA solar-storm feed, paired with built-in Mars terrain layers'
+          : snap.trekLive
+            ? 'Connected to live NASA orbital map, paired with built-in Mars terrain layers'
+            : 'Running 100% offline with built-in NASA-calibrated Mars terrain models';
+
     const rows = snap.surrogateDatasets
       .map((ds) => {
-        const tagClass =
-          ds.mode === 'HYBRID' ? (snap.donkiLive ? 'tag-live' : 'tag-hybrid') : 'tag-surrogate';
+        const isHybrid = ds.mode === 'HYBRID';
+        const tagClass = isHybrid ? (snap.donkiLive ? 'tag-live' : 'tag-hybrid') : 'tag-surrogate';
+        const friendlyType = isHybrid ? 'Live + Sim' : 'Built-In Sim';
         return `
           <tr>
             <td><strong>${escapeHtml(ds.pill)}</strong></td>
             <td>${escapeHtml(ds.pdsFamily)}</td>
-            <td class="${tagClass}">${escapeHtml(ds.mode)}</td>
+            <td class="${tagClass}">${friendlyType}</td>
             <td>${escapeHtml(ds.role)}</td>
           </tr>`;
       })
@@ -1148,34 +1213,44 @@ class BioRadiusApp {
 
     this.dom.provenanceDialogBody.innerHTML = `
       <p class="dialog-lead">
-        <strong>Active Mode:</strong> ${escapeHtml(snap.label)}
+        <strong>Active Mode:</strong> ${escapeHtml(friendlyModeNote)}
       </p>
       ${
         snap.customDemActive && snap.customDemMeta
           ? `<p class="ops-status mono-num">
-              Custom DEM: <strong>${escapeHtml(snap.customDemMeta.fileName)}</strong> (${escapeHtml(
+              Custom Map: <strong>${escapeHtml(snap.customDemMeta.fileName)}</strong> (${escapeHtml(
                 snap.customDemMeta.format
-              )}, ${escapeHtml(snap.customDemMeta.dimensions)} → 150×150 resampled in ${snap.customDemMeta.ingestElapsedMs} ms)
+              )}, ${escapeHtml(snap.customDemMeta.dimensions)} fit to 150×150 in ${snap.customDemMeta.ingestElapsedMs} ms)
             </p>`
           : ''
       }
       <table class="spec-table">
         <thead>
           <tr>
-            <th>Live Endpoint</th>
-            <th>Status</th>
+            <th>NASA Live Feed</th>
+            <th>
+              Connection
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Live Connected vs Offline Backup">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Live Internet Connection:</strong><br>
+                  • <strong>Live Connected:</strong> Your browser just downloaded fresh orbital imagery or solar-storm telemetry directly from NASA/JPL servers (browser image/data access permitted).<br>
+                  • <strong>Offline Backup:</strong> NASA servers were unreachable or offline, so BioRadius switched smoothly to its built-in fallback.
+                </span>
+              </span>
+            </th>
             <th>Details</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>JPL Mars Trek WMTS</td>
-            <td class="${snap.trekLive ? 'tag-live' : 'tag-surrogate'}">${snap.trekLive ? 'LIVE CORS OK' : 'FALLBACK'}</td>
-            <td class="mono-num">${escapeHtml(snap.trekLive ? snap.trekEndpoint : snap.trekError || 'Deterministic orbital albedo fallback')}</td>
+            <td>JPL Mars Trek Orbital Map</td>
+            <td class="${snap.trekLive ? 'tag-live' : 'tag-surrogate'}">${snap.trekLive ? 'Live Connected' : 'Offline Backup'}</td>
+            <td class="mono-num">${escapeHtml(snap.trekLive ? snap.trekEndpoint : snap.trekError || 'Using built-in orbital surface texture')}</td>
           </tr>
           <tr>
-            <td>NASA DONKI SEP</td>
-            <td class="${snap.donkiLive ? 'tag-live' : 'tag-surrogate'}">${snap.donkiLive ? 'LIVE HTTP 200' : 'FALLBACK'}</td>
+            <td>NASA DONKI Solar Storm Alert</td>
+            <td class="${snap.donkiLive ? 'tag-live' : 'tag-surrogate'}">${snap.donkiLive ? 'Live Connected' : 'Offline Backup'}</td>
             <td class="mono-num">${escapeHtml(snap.sepEventMeta.statusNote)}</td>
           </tr>
         </tbody>
@@ -1183,14 +1258,53 @@ class BioRadiusApp {
       <table class="spec-table">
         <thead>
           <tr>
-            <th>UI Layer</th>
-            <th>NASA PDS Product Family</th>
-            <th>Classification</th>
-            <th>Physical Role</th>
+            <th>Map Layer</th>
+            <th>NASA Instrument Source</th>
+            <th>
+              Data Type
+              <span class="layer-info" tabindex="0" role="button" aria-label="Explain Built-In Sim vs Live + Sim">
+                i
+                <span class="layer-tooltip" role="tooltip">
+                  <strong>Plain-Language Guide:</strong><br>
+                  • <strong>Built-In Sim:</strong> Pre-packaged Mars terrain/weather model calibrated to real NASA mission data (<code>HiRISE/MOLA</code>, <code>THEMIS</code>, <code>CRISM</code>, <code>MEDA</code>) so everything runs instantly without huge file downloads.<br>
+                  • <strong>Live + Sim:</strong> Combines live NASA solar-storm alerts from the internet with local canyon shielding computed from the terrain map.
+                </span>
+              </span>
+            </th>
+            <th>What It Models</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
-      </table>`;
+      </table>
+      <div class="ops-status">
+        <strong>Quick Guide:</strong>
+        <span class="tag-live">Live Connected</span> = real NASA/JPL data fetched live over internet •
+        <span class="tag-hybrid">Live + Sim</span> = live NASA storm alert + local terrain shielding •
+        <span class="tag-surrogate">Built-In Sim</span> = instant pre-built Mars model (no large downloads needed).
+      </div>`;
+  }
+
+  updateStoryBanner({ actNum, kicker, title, body, liveText, tone = 'safe', progressPct = 25 }) {
+    if (!this.dom.storyBanner) return;
+    this.dom.storyBanner.hidden = false;
+    this.dom.storyBanner.dataset.storyTone = tone;
+    if (this.dom.storyKicker) this.dom.storyKicker.textContent = kicker;
+    if (this.dom.storyTitle) this.dom.storyTitle.textContent = title;
+    if (this.dom.storyBody) this.dom.storyBody.textContent = body;
+    if (this.dom.storyLive) this.dom.storyLive.textContent = liveText;
+    if (this.dom.storyProgress) {
+      const clamped = Math.max(0, Math.min(100, progressPct));
+      this.dom.storyProgress.style.width = `${clamped}%`;
+    }
+    this.dom.storyActPills.forEach((btn) => {
+      btn.classList.toggle('active', Number(btn.dataset.storyAct) === actNum);
+    });
+  }
+
+  hideStoryBanner() {
+    if (this.dom.storyBanner) {
+      this.dom.storyBanner.hidden = true;
+    }
   }
 
   interruptStory() {
@@ -1206,9 +1320,10 @@ class BioRadiusApp {
         this.dom.playStoryBtn.textContent = '▶ Play 30s Story';
       }
       if (this.dom.actIndicator) {
-        this.dom.actIndicator.textContent = 'LIVE EVA TELEMETRY';
+        this.dom.actIndicator.textContent = 'EVA & ROUTE TELEMETRY';
       }
     }
+    this.hideStoryBanner();
   }
 
   play30sStory() {
@@ -1227,6 +1342,15 @@ class BioRadiusApp {
         this._storyRunning = false;
         if (this.dom.playStoryBtn) this.dom.playStoryBtn.textContent = '▶ Play 30s Story';
         if (this.dom.actIndicator) this.dom.actIndicator.textContent = 'STORY COMPLETE • LIVE';
+        this.updateStoryBanner({
+          actNum: 0,
+          kicker: '30S MISSION STORY COMPLETE',
+          title: 'All 4 Acts Demonstrated — Interactive Mars Sandbox Ready',
+          body: 'You can replay any story chapter above, toggle NASA layers at the bottom, switch between Mount Sharp and Jezero, or drag the astronaut pin on the 3D terrain.',
+          liveText: 'Click Act 1–4 above to inspect a chapter, drag the astronaut pin, or click ✕ to dismiss.',
+          tone: 'jezero',
+          progressPct: 100
+        });
       }, 30000)
     );
   }
@@ -1236,9 +1360,10 @@ class BioRadiusApp {
       clearInterval(this._storyRampInterval);
       this._storyRampInterval = null;
     }
+    const shouldAnimateRamp = Boolean(animateRamp && this._storyRunning);
 
     if (actNum === 1) {
-      // Act 1 (0:00–0:07): Mount Sharp nominal EVA + Skyline TRN lock
+      // Act 1 (0:00–0:07): Mount Sharp Layered NASA Mars Map + Safe Return Envelope (WP-1..3)
       if (this.activeSiteId !== 'MOUNT_SHARP_BOXWORK') {
         this.switchSite('MOUNT_SHARP_BOXWORK', { skipSolve: true });
       }
@@ -1263,11 +1388,41 @@ class BioRadiusApp {
 
       if (this.dom.drawerSkyline) this.dom.drawerSkyline.open = true;
       if (this.dom.drawerVitals) this.dom.drawerVitals.open = true;
-      this.setActiveDockTab('horizon');
-      if (this.dom.actIndicator) this.dom.actIndicator.textContent = 'ACT 1/4 • SKYLINE TRN LOCK';
+      this.setActiveDockTab('controls');
+      if (this.dom.actIndicator) this.dom.actIndicator.textContent = 'ACT 1/4 • LAYERED MARS MAP & SAFE RETURN';
 
       this.lastSkylineKey = '';
       this.executeSolveNow({ forcePass1: true, refreshAttribution: true, skipSkyline: false });
+      this.updateStoryBanner({
+        actNum: 1,
+        kicker: '30S MISSION STORY • ACT 1 OF 4 (0:00–0:07)',
+        title: 'Act 1 · 5 Layered NASA Mars Maps & Live Safe Return Zone',
+        body: 'BioRadius fuses 5 NASA datasets on Mount Sharp to draw the green Safe Zone (<75% reserve), amber Caution zone, and blue energy-optimal Return Route back to Base.',
+        liveText: STORY_ACT1_LAYER_NOTES.topo,
+        tone: 'safe',
+        progressPct: 12
+      });
+
+      if (shouldAnimateRamp) {
+        const storyLayers = ['topo', 'themis', 'crism', 'meda', 'rad'];
+        let layerIdx = 0;
+        this._storyRampInterval = setInterval(() => {
+          layerIdx++;
+          if (layerIdx >= storyLayers.length || !this._storyRunning) {
+            clearInterval(this._storyRampInterval);
+            this._storyRampInterval = null;
+            return;
+          }
+          const layerKey = storyLayers[layerIdx];
+          this.setActiveLayer(layerKey);
+          if (this.dom.storyLive) {
+            this.dom.storyLive.textContent = STORY_ACT1_LAYER_NOTES[layerKey] || '';
+          }
+          if (this.dom.storyProgress) {
+            this.dom.storyProgress.style.width = `${5 + layerIdx * 5}%`;
+          }
+        }, 1300);
+      }
     } else if (actNum === 2) {
       // Act 2 (0:07–0:16): WP-3 Core Sampling & Beyond-Turnaround Crisis (~545 kcal/hr)
       if (this.activeSiteId !== 'MOUNT_SHARP_BOXWORK') {
@@ -1298,6 +1453,15 @@ class BioRadiusApp {
 
       this.lastSkylineKey = '';
       this.executeSolveNow({ forcePass1: true, refreshAttribution: true, skipSkyline: false });
+      this.updateStoryBanner({
+        actNum: 2,
+        kicker: '30S MISSION STORY • ACT 2 OF 4 (0:07–0:16)',
+        title: 'Act 2 · Beyond Safe Turnaround (Heavy Sample Overload)',
+        body: 'At WP-3 Upper Gediz Vallis Scarp (2.8 km out), collecting +25 kg of rock samples pushes suit mass to 90 kg and heart rate to 168 BPM across loose drift sand.',
+        liveText: 'TURN BACK Alert: Return energy now exceeds remaining calories & O₂ (>100% red zone) — drop core weight or abort immediately.',
+        tone: 'exceeded',
+        progressPct: 50
+      });
     } else if (actNum === 3) {
       // Act 3 (0:16–0:23): DONKI SEP Radiation Storm + CR2032 1Hz Eco Survival
       if (this.activeSiteId !== 'MOUNT_SHARP_BOXWORK') {
@@ -1328,6 +1492,15 @@ class BioRadiusApp {
       this.lastSkylineKey = '';
       this.executeSolveNow({ forcePass1: true, refreshAttribution: true, skipSkyline: false });
       this.setEcoMode(true);
+      this.updateStoryBanner({
+        actNum: 3,
+        kicker: '30S MISSION STORY • ACT 3 OF 4 (0:16–0:23)',
+        title: 'Act 3 · Solar Radiation Storm Shelter & 1 Hz Watch Battery Saver',
+        body: 'NASA DONKI SEP storm alert triggers a pullback toward WP-2 canyon shelter while BioRadius pauses the 60 Hz 3D GPU to run the wrist Watchfinder at 1 Hz.',
+        liveText: 'Power Gated: 0.0 mW 3D GPU • 42.3 mW total draw extends emergency navigation to 15.6 hrs on one CR2032 coin cell.',
+        tone: 'caution',
+        progressPct: 75
+      });
     } else if (actNum === 4) {
       // Act 4 (0:23–0:30): Exit Eco Mode -> Jezero Delta Multi-Layer Counterfactuals & Exertion Ramp
       this.setEcoMode(false);
@@ -1348,7 +1521,7 @@ class BioRadiusApp {
       this.state.spo2Pct = 97.5;
       this.state.coreTempC = 37.2;
       this.state.ppCo2MmHg = 2.0;
-      this.state.hrBpm = animateRamp ? 80 : 158;
+      this.state.hrBpm = shouldAnimateRamp ? 80 : 158;
       this.syncLayerUi();
       this.syncControlsFromState();
 
@@ -1358,8 +1531,20 @@ class BioRadiusApp {
 
       this.lastSkylineKey = '';
       this.executeSolveNow({ forcePass1: true, refreshAttribution: true, skipSkyline: false });
+      const initialKmLeft = this.lastHeroMetrics
+        ? `${this.lastHeroMetrics.turnaroundDistKm.toFixed(2)} km to turnaround`
+        : 'live contour updating';
+      this.updateStoryBanner({
+        actNum: 4,
+        kicker: '30S MISSION STORY • ACT 4 OF 4 (0:23–0:30)',
+        title: "Act 4 · Jezero Crater Delta: Live Heart-Rate vs. Safe Return Shrinkage",
+        body: "Switching to Perseverance's Jezero River Delta shows how spiking astronaut heart rate immediately contracts the green Safe Return envelope across clay and sand layers.",
+        liveText: `Live Stress Sweep: Heart Rate ${this.state.hrBpm} BPM • Layer: ${STORY_LAYER_SHORT_LABELS[this.state.activeLayer]} • ${initialKmLeft}`,
+        tone: 'jezero',
+        progressPct: 90
+      });
 
-      if (animateRamp) {
+      if (shouldAnimateRamp) {
         let step = 0;
         const rampLayers = ['crism', 'themis', 'meda', 'topo'];
         this._storyRampInterval = setInterval(() => {
@@ -1378,6 +1563,15 @@ class BioRadiusApp {
             refreshAttribution: step === 10,
             skipSkyline: true
           });
+          if (this.dom.storyLive) {
+            const kmLeft = this.lastHeroMetrics
+              ? `${this.lastHeroMetrics.turnaroundDistKm.toFixed(2)} km to turnaround`
+              : 're-solving';
+            this.dom.storyLive.textContent = `Live Stress Sweep: Heart Rate ${this.state.hrBpm} BPM • Layer: ${STORY_LAYER_SHORT_LABELS[this.state.activeLayer] || this.state.activeLayer} • ${kmLeft}`;
+          }
+          if (this.dom.storyProgress) {
+            this.dom.storyProgress.style.width = `${Math.round(78 + step * 2.2)}%`;
+          }
         }, 550);
       }
     }
@@ -1415,7 +1609,7 @@ class BioRadiusApp {
     }
     this.switchSite('CUSTOM_MISSION_DEM', { skipSolve: false });
     if (this.dom.demIngestStatus) {
-      this.dom.demIngestStatus.textContent = `✅ Ingested ${dem.sourceFileName} (${dem.sourceFormat}, ${dem.sourceDimensions} → 150×150) in ${dem.ingestElapsedMs} ms | Elev ${dem.elevRangeLabel}`;
+      this.dom.demIngestStatus.textContent = `✅ Loaded ${dem.sourceFileName} (${dem.sourceFormat}, ${dem.sourceDimensions} fit to 150×150) in ${dem.ingestElapsedMs} ms | Elev ${dem.elevRangeLabel}`;
     }
     return dem;
   }
@@ -1434,7 +1628,7 @@ class BioRadiusApp {
       typeof navigator.bluetooth.requestDevice !== 'function'
     ) {
       this.updateHwStatusUi(
-        'BLE Web Bluetooth unavailable in this browser — staying in Planner Sim mode.'
+        'Bluetooth heart-rate access is unavailable in this browser — staying in Simulation Mode.'
       );
       return;
     }
@@ -1612,14 +1806,14 @@ class BioRadiusApp {
   updateHwStatusUi(overrideMsg = null) {
     if (this.dom.btnPairBle) {
       this.dom.btnPairBle.textContent = this._bleStreaming
-        ? '🔌 Disconnect BLE GATT (0x180D)'
-        : '🫀 Pair BLE Biometrics (0x180D)';
+        ? '🔌 Disconnect Heart Rate'
+        : '🫀 Connect Heart Rate (Bluetooth)';
       this.dom.btnPairBle.classList.toggle('is-live-ops', this._bleStreaming);
     }
     if (this.dom.btnLinkImu) {
       this.dom.btnLinkImu.textContent = this._imuActive
-        ? '🛑 Unlink IMU / Field GPS'
-        : '🧭 Link IMU / Field GPS';
+        ? '🛑 Disconnect Compass & GPS'
+        : '🧭 Connect Compass & GPS';
       this.dom.btnLinkImu.classList.toggle('is-live-ops', this._imuActive);
     }
     if (!this.dom.hwModeStatus) return;
@@ -1628,14 +1822,14 @@ class BioRadiusApp {
       return;
     }
     const parts = [];
-    if (this._bleStreaming) parts.push('🟢 BLE GATT 0x180D ACTIVE (HR slider locked)');
+    if (this._bleStreaming) parts.push('🟢 Bluetooth Heart Rate Connected (HR slider locked)');
     if (this._imuActive) {
       const hdg =
         this._imuHeadingDeg !== null ? `${Math.round(this._imuHeadingDeg)}°` : 'waiting orientation';
-      parts.push(`🧭 IMU/GPS LINKED (${hdg})`);
+      parts.push(`🧭 Compass & GPS Connected (${hdg})`);
     }
     this.dom.hwModeStatus.textContent =
-      parts.length > 0 ? parts.join(' • ') : '🎛️ PLANNER SIM ACTIVE (Manual sliders unlocked)';
+      parts.length > 0 ? parts.join(' • ') : '🎛️ Simulation Mode Active (Manual sliders unlocked)';
   }
 
   recordBlackBoxFrame() {
@@ -1726,7 +1920,7 @@ class BioRadiusApp {
       this.syncControlsFromState();
       this.lastSkylineKey = '';
       this.executeSolveNow({ forcePass1: true, refreshAttribution: true, skipSkyline: false });
-      this.updateOpsStatusUi(`✅ Restored EVA snapshot from ${snap.savedAtUtc}`);
+      this.updateOpsStatusUi(`✅ Restored session from ${snap.savedAtUtc}`);
     } catch (err) {
       this.updateOpsStatusUi(`❌ Restore failed: ${err?.message || err}`);
     }
@@ -1740,7 +1934,7 @@ class BioRadiusApp {
     } catch {
       // Ignore
     }
-    this.updateOpsStatusUi('🧹 Black-Box ring buffer and localStorage snapshot cleared.');
+    this.updateOpsStatusUi('🧹 Saved mission history cleared.');
   }
 
   updateOpsStatusUi(blackBoxOverride = null) {
@@ -1749,19 +1943,19 @@ class BioRadiusApp {
       this.dom.blackboxStatus.textContent = blackBoxOverride;
       return;
     }
-    let savedNote = 'none persisted';
+    let savedNote = 'none saved yet';
     try {
       if (typeof localStorage !== 'undefined') {
         const raw = localStorage.getItem(BLACKBOX_STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          savedNote = `snapshot @ ${parsed.savedAtUtc?.slice(11, 19) ?? 'saved'} UTC`;
+          savedNote = `saved @ ${parsed.savedAtUtc?.slice(11, 19) ?? 'saved'} UTC`;
         }
       }
     } catch {
       // Ignore
     }
-    this.dom.blackboxStatus.textContent = `${this.blackBox.count}/${this.blackBox.cap} frames buffered • ${savedNote}`;
+    this.dom.blackboxStatus.textContent = `${this.blackBox.count}s / ${this.blackBox.cap}s recorded • ${savedNote}`;
   }
 
   /**
@@ -1808,7 +2002,7 @@ class BioRadiusApp {
     const filename = `bioradius_${this.activeSiteId.toLowerCase()}_perimeter.geojson`;
     this.downloadTextFile(filename, json, 'application/geo+json');
     if (this.dom.exportStatus) {
-      this.dom.exportStatus.textContent = `✅ Exported ${filename} (RFC 7946 GeoJSON)`;
+      this.dom.exportStatus.textContent = `✅ Downloaded ${filename} (Safe Zone Map)`;
     }
     return json;
   }
@@ -1818,7 +2012,7 @@ class BioRadiusApp {
     const filename = `bioradius_${this.activeSiteId.toLowerCase()}_return.gpx`;
     this.downloadTextFile(filename, gpx, 'application/gpx+xml');
     if (this.dom.exportStatus) {
-      this.dom.exportStatus.textContent = `✅ Exported ${filename} (GPX 1.1 Route)`;
+      this.dom.exportStatus.textContent = `✅ Downloaded ${filename} (Return Route GPX)`;
     }
     return gpx;
   }
@@ -1828,7 +2022,7 @@ class BioRadiusApp {
     const filename = `bioradius_${this.activeSiteId.toLowerCase()}_flight_surgeon.csv`;
     this.downloadTextFile(filename, csv, 'text/csv');
     if (this.dom.exportStatus) {
-      this.dom.exportStatus.textContent = `✅ Exported ${filename} (${this.blackBox.count} 1Hz rows)`;
+      this.dom.exportStatus.textContent = `✅ Downloaded ${filename} (${this.blackBox.count}s log)`;
     }
     return csv;
   }

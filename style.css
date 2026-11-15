@@ -50,6 +50,27 @@
   --scrollbar-thumb-dark: #6f788a;
   --brand-badge-fg-light: #0052a3;
   --brand-badge-fg-dark: #64b5ff;
+  --brand-subtitle-fg-light: #1e40af;
+  --brand-subtitle-fg-dark: #93c5fd;
+  --nav-controls-fg-light: #0052a3;
+  --nav-controls-fg-dark: #7cc4ff;
+  --nav-controls-hover-fg-light: #003d80;
+  --nav-controls-hover-fg-dark: #bae0ff;
+  --nav-horizon-fg-light: #0369a1;
+  --nav-horizon-fg-dark: #67e8f9;
+  --nav-horizon-hover-fg-light: #075985;
+  --nav-horizon-hover-fg-dark: #cffafe;
+  --nav-ops-fg-light: #5b21b6;
+  --nav-ops-fg-dark: #c4b5fd;
+  --nav-ops-hover-fg-light: #4c1d95;
+  --nav-ops-hover-fg-dark: #ede9fe;
+  --brand-subtitle-fg: var(--brand-subtitle-fg-light);
+  --nav-controls-fg: var(--nav-controls-fg-light);
+  --nav-controls-hover-fg: var(--nav-controls-hover-fg-light);
+  --nav-horizon-fg: var(--nav-horizon-fg-light);
+  --nav-horizon-hover-fg: var(--nav-horizon-hover-fg-light);
+  --nav-ops-fg: var(--nav-ops-fg-light);
+  --nav-ops-hover-fg: var(--nav-ops-hover-fg-light);
   --provenance-fg-light: #1e293b;
   --provenance-fg-dark: #cdd6e4;
   --provenance-live-fg-light: #0f5e28;
@@ -137,6 +158,13 @@
     --scrollbar-track: var(--scrollbar-track-dark);
     --scrollbar-thumb: var(--scrollbar-thumb-dark);
     --brand-badge-fg: var(--brand-badge-fg-dark);
+    --brand-subtitle-fg: var(--brand-subtitle-fg-dark);
+    --nav-controls-fg: var(--nav-controls-fg-dark);
+    --nav-controls-hover-fg: var(--nav-controls-hover-fg-dark);
+    --nav-horizon-fg: var(--nav-horizon-fg-dark);
+    --nav-horizon-hover-fg: var(--nav-horizon-hover-fg-dark);
+    --nav-ops-fg: var(--nav-ops-fg-dark);
+    --nav-ops-hover-fg: var(--nav-ops-hover-fg-dark);
     --provenance-fg: var(--provenance-fg-dark);
     --provenance-live-fg: var(--provenance-live-fg-dark);
     --audit-fg: var(--audit-fg-dark);
@@ -175,6 +203,13 @@
     --scrollbar-track: light-dark(var(--scrollbar-track-light), var(--scrollbar-track-dark));
     --scrollbar-thumb: light-dark(var(--scrollbar-thumb-light), var(--scrollbar-thumb-dark));
     --brand-badge-fg: light-dark(var(--brand-badge-fg-light), var(--brand-badge-fg-dark));
+    --brand-subtitle-fg: light-dark(var(--brand-subtitle-fg-light), var(--brand-subtitle-fg-dark));
+    --nav-controls-fg: light-dark(var(--nav-controls-fg-light), var(--nav-controls-fg-dark));
+    --nav-controls-hover-fg: light-dark(var(--nav-controls-hover-fg-light), var(--nav-controls-hover-fg-dark));
+    --nav-horizon-fg: light-dark(var(--nav-horizon-fg-light), var(--nav-horizon-fg-dark));
+    --nav-horizon-hover-fg: light-dark(var(--nav-horizon-hover-fg-light), var(--nav-horizon-hover-fg-dark));
+    --nav-ops-fg: light-dark(var(--nav-ops-fg-light), var(--nav-ops-fg-dark));
+    --nav-ops-hover-fg: light-dark(var(--nav-ops-hover-fg-light), var(--nav-ops-hover-fg-dark));
     --provenance-fg: light-dark(var(--provenance-fg-light), var(--provenance-fg-dark));
     --provenance-live-fg: light-dark(var(--provenance-live-fg-light), var(--provenance-live-fg-dark));
     --audit-fg: light-dark(var(--audit-fg-light), var(--audit-fg-dark));
@@ -196,6 +231,7 @@
   --primary: #0a84ff;
   accent-color: var(--primary);
 
+  --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", system-ui, sans-serif;
   --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
 }
@@ -249,11 +285,12 @@ body {
 
 .brand-lockup {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.5px;
   min-width: 0;
-  flex-shrink: 1;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .brand-badge {
@@ -269,25 +306,28 @@ body {
 }
 
 .brand-title {
-  font-size: 15px;
+  font-family: var(--font-display);
+  font-size: 15.5px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   color: var(--text-primary);
+  color: light-dark(#000000, #ffffff);
   white-space: nowrap;
 }
 
 .brand-subtitle {
-  font-size: 11px;
-  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.008em;
+  -webkit-font-smoothing: antialiased;
+  color: var(--brand-subtitle-fg);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (max-width: 1440px) {
-  .brand-subtitle {
-    display: none;
-  }
 }
 
 @media (max-width: 1280px) {
@@ -299,13 +339,6 @@ body {
     flex-wrap: wrap;
     padding: 6px 12px;
   }
-}
-
-.top-nav-tabs {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
 }
 
 .header-actions {
@@ -346,6 +379,154 @@ body {
   background: var(--seg-active-bg);
   color: var(--text-primary);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+/* Top Workspace Navigation Dock (Aerospace Cobalt / Cyan-Indigo / Violet) */
+.top-nav-tabs.segmented-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 3px;
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.12), rgba(99, 102, 241, 0.12));
+  border: 1px solid rgba(10, 132, 255, 0.34);
+}
+
+.top-nav-tabs .seg-btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.top-nav-tabs .seg-btn[data-dock-tab="controls"] {
+  color: var(--nav-controls-fg);
+  background: rgba(10, 132, 255, 0.08);
+  border-color: rgba(10, 132, 255, 0.20);
+}
+
+.top-nav-tabs .seg-btn[data-dock-tab="controls"]:hover {
+  color: var(--nav-controls-hover-fg);
+  background: rgba(10, 132, 255, 0.18);
+  border-color: rgba(10, 132, 255, 0.38);
+}
+
+.top-nav-tabs .seg-btn[data-dock-tab="controls"].active {
+  background: linear-gradient(135deg, #0a84ff, #0055d4);
+  border-color: rgba(10, 132, 255, 0.72);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(10, 132, 255, 0.34);
+}
+
+.top-nav-tabs .seg-btn[data-dock-tab="horizon"] {
+  color: var(--nav-horizon-fg);
+  background: rgba(14, 165, 233, 0.09);
+  border-color: rgba(14, 165, 233, 0.22);
+}
+
+.top-nav-tabs .seg-btn[data-dock-tab="horizon"]:hover {
+  color: var(--nav-horizon-hover-fg);
+  background: rgba(14, 165, 233, 0.18);
+  border-color: rgba(14, 165, 233, 0.40);
+}
+
+.top-nav-tabs .seg-btn[data-dock-tab="horizon"].active {
+  background: linear-gradient(135deg, #0284c7, #4f46e5);
+  border-color: rgba(56, 189, 248, 0.72);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.34);
+}
+
+.top-nav-tabs .seg-btn[data-open-dialog="ops-dialog"] {
+  color: var(--nav-ops-fg);
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.13), rgba(79, 70, 229, 0.13));
+  border-color: rgba(109, 40, 217, 0.30);
+}
+
+.top-nav-tabs .seg-btn[data-open-dialog="ops-dialog"]:hover {
+  color: var(--nav-ops-hover-fg);
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.24), rgba(79, 70, 229, 0.24));
+  border-color: rgba(124, 58, 237, 0.56);
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.22);
+}
+
+/* Planetary Landing Site Location Switcher (Martian geological tones vs neutral workspace tabs) */
+.site-location-switcher {
+  align-items: center;
+  gap: 2px;
+  background: linear-gradient(135deg, rgba(200, 75, 32, 0.14), rgba(184, 98, 20, 0.10));
+  border: 1px solid rgba(200, 75, 32, 0.38);
+}
+
+.site-loc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.site-loc-btn[hidden] {
+  display: none;
+}
+
+.site-loc-btn::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.site-loc-btn[data-site="MOUNT_SHARP_BOXWORK"]::before {
+  background: #d95326;
+  box-shadow: 0 0 6px rgba(217, 83, 38, 0.65);
+}
+
+.site-loc-btn[data-site="JEZERO_DELTA"]::before {
+  background: #c97316;
+  box-shadow: 0 0 6px rgba(201, 115, 22, 0.65);
+}
+
+.site-loc-btn[data-site="CUSTOM_MISSION_DEM"]::before {
+  background: #109e78;
+  box-shadow: 0 0 6px rgba(16, 158, 120, 0.65);
+}
+
+.site-loc-btn[data-site="MOUNT_SHARP_BOXWORK"]:hover:not(.active) {
+  background: rgba(200, 75, 32, 0.14);
+}
+
+.site-loc-btn[data-site="JEZERO_DELTA"]:hover:not(.active) {
+  background: rgba(184, 98, 20, 0.14);
+}
+
+.site-loc-btn[data-site="CUSTOM_MISSION_DEM"]:hover:not(.active) {
+  background: rgba(13, 122, 95, 0.14);
+}
+
+.site-location-switcher .site-loc-btn[data-site="MOUNT_SHARP_BOXWORK"].active {
+  background: linear-gradient(135deg, #c84b20, #a63612);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(166, 54, 18, 0.38);
+}
+
+.site-location-switcher .site-loc-btn[data-site="JEZERO_DELTA"].active {
+  background: linear-gradient(135deg, #b86214, #944808);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(148, 72, 8, 0.38);
+}
+
+.site-location-switcher .site-loc-btn[data-site="CUSTOM_MISSION_DEM"].active {
+  background: linear-gradient(135deg, #0d7a5f, #095c47);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(9, 92, 71, 0.38);
+}
+
+.site-location-switcher .site-loc-btn.active::before {
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
 }
 
 .hud-pill {
@@ -391,6 +572,17 @@ body {
   border-color: rgba(255, 69, 58, 0.55);
   color: var(--audit-fail-fg);
   background: rgba(255, 69, 58, 0.14);
+}
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  padding: 0;
+  font-size: 13.5px;
+  line-height: 1;
 }
 
 .primary-btn {
@@ -544,6 +736,24 @@ body {
 .dot-path {
   background: var(--primary);
   box-shadow: 0 0 8px rgba(10, 132, 255, 0.8);
+}
+
+.active-layer-key {
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--text-primary);
+  background: var(--card-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  padding: 4px 8px;
+  max-width: 420px;
+  text-align: right;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.active-layer-key.is-bypassed {
+  opacity: 0.72;
+  color: var(--text-secondary);
 }
 
 .waypoint-pills {
@@ -782,6 +992,7 @@ body.ui-tooltips-ready .layer-tooltip {
 .eco-overlay {
   position: absolute;
   inset: 0;
+  padding-bottom: 112px;
   z-index: 12;
   display: flex;
   align-items: center;
@@ -823,6 +1034,150 @@ body.ui-tooltips-ready .layer-tooltip {
 .eco-overlay-card p {
   font-size: 12px;
   color: var(--safe);
+}
+
+/* On-Screen 30s Story Narration Banner */
+.story-caption-banner {
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(670px, calc(100% - 24px));
+  z-index: 15;
+  padding: 10px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--bg-glass-strong);
+  border: 1px solid var(--border-strong);
+  border-left: 4px solid var(--safe);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.story-caption-banner[hidden] {
+  display: none !important;
+}
+
+.story-caption-banner[data-story-tone="safe"] {
+  border-left-color: var(--safe);
+}
+
+.story-caption-banner[data-story-tone="exceeded"] {
+  border-left-color: var(--critical);
+}
+
+.story-caption-banner[data-story-tone="caution"] {
+  border-left-color: var(--caution);
+}
+
+.story-caption-banner[data-story-tone="jezero"] {
+  border-left-color: var(--primary);
+}
+
+.story-caption-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.story-caption-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--brand-subtitle-fg);
+}
+
+.story-act-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.story-act-pill {
+  border: 1px solid var(--border-subtle);
+  background: var(--card-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.story-act-pill:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.story-act-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.story-caption-close {
+  border: 1px solid var(--border-subtle);
+  background: var(--card-subtle);
+  color: var(--text-secondary);
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-caption-close:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.story-caption-title {
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.story-caption-body {
+  font-size: 11.5px;
+  line-height: 1.38;
+  color: var(--text-secondary);
+}
+
+.story-caption-live {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--card-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  padding: 4px 8px;
+}
+
+.story-progress-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--card-subtle);
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.story-progress-fill {
+  height: 100%;
+  width: 25%;
+  background: linear-gradient(90deg, var(--primary), var(--safe));
+  transition: width 0.35s ease;
 }
 
 /* Right 32% Flight Dock */
@@ -1339,6 +1694,16 @@ input[type="range"]::-webkit-slider-thumb {
   flex-shrink: 0;
 }
 
+.footer-actions .hud-pill {
+  padding: 2px 10px;
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+
+.header-actions .dock-tab-btn.active {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.42);
+}
+
 /* Dedicated Full-Page Astronaut User Guide View */
 .guide-page {
   min-height: 0;
@@ -1622,6 +1987,7 @@ input[type="range"]::-webkit-slider-thumb {
   margin: auto;
   width: min(740px, 92vw);
   max-height: 84vh;
+  overflow: visible;
   border-radius: 18px;
   border: 1px solid var(--border-strong);
   background: var(--dialog-bg);
@@ -1761,6 +2127,13 @@ input[type="range"]::-webkit-slider-thumb {
     --scrollbar-track: var(--scrollbar-track-dark);
     --scrollbar-thumb: var(--scrollbar-thumb-dark);
     --brand-badge-fg: var(--brand-badge-fg-dark);
+    --brand-subtitle-fg: var(--brand-subtitle-fg-dark);
+    --nav-controls-fg: var(--nav-controls-fg-dark);
+    --nav-controls-hover-fg: var(--nav-controls-hover-fg-dark);
+    --nav-horizon-fg: var(--nav-horizon-fg-dark);
+    --nav-horizon-hover-fg: var(--nav-horizon-hover-fg-dark);
+    --nav-ops-fg: var(--nav-ops-fg-dark);
+    --nav-ops-hover-fg: var(--nav-ops-hover-fg-dark);
     --provenance-fg: var(--provenance-fg-dark);
     --provenance-live-fg: var(--provenance-live-fg-dark);
     --audit-fg: var(--audit-fg-dark);
@@ -1781,6 +2154,8 @@ input[type="range"]::-webkit-slider-thumb {
 @media (forced-colors: active) {
   .hud-pill,
   .seg-btn.active,
+  .top-nav-tabs .seg-btn[data-open-dialog="ops-dialog"],
+  .story-caption-banner,
   .hero-status-pill,
   .bento-card,
   .bento-accordion,

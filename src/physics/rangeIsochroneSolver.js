@@ -358,7 +358,7 @@ export class RangeIsochroneSolver {
       }
       // When the astronaut steps outside the safe return envelope (totalField > 1.0 everywhere),
       // project the base returnCost boundary so the glowing red turnaround ring stays visible.
-      if (this.contour100FloatCount === 0) {
+      if (this.contour100FloatCount === 0 && safeCount + cautionCount === 0) {
         this.contour100FloatCount = this.extractMarchingSquaresSegments(
           returnCost,
           1.0,

@@ -190,8 +190,18 @@ export class NasaMarsLiveClient {
       this.donkiLive = true;
       this.donkiError = null;
       if (data.length > 0) {
-        const latest = data[data.length - 1];
-        const eventMs = latest.eventTime ? Date.parse(latest.eventTime) : NaN;
+        let latest = data[data.length - 1];
+        let maxEventMs = Number.isFinite(Date.parse(latest?.eventTime || ''))
+          ? Date.parse(latest.eventTime)
+          : -Infinity;
+        for (const item of data) {
+          const tMs = item?.eventTime ? Date.parse(item.eventTime) : NaN;
+          if (Number.isFinite(tMs) && tMs > maxEventMs) {
+            maxEventMs = tMs;
+            latest = item;
+          }
+        }
+        const eventMs = Number.isFinite(maxEventMs) && maxEventMs > -Infinity ? maxEventMs : NaN;
         const ageMs = Number.isFinite(eventMs) ? Math.max(0, Date.now() - eventMs) : Infinity;
         const recencyHrs = Number.isFinite(ageMs) ? ageMs / 3600000.0 : null;
         const isActiveStorm = Number.isFinite(ageMs) && ageMs <= SEP_ACTIVE_WINDOW_MS;

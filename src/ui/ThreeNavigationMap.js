@@ -395,39 +395,50 @@ export class ThreeNavigationMap {
     const windDirY = -Math.cos(windAz);
     const windSpeedNorm = Math.max(0.0, Math.min(1.0, (state.windSpeedMs ?? 8.5) / 18.0));
 
+    const isActiveLayerEnabled = state.layers?.[activeLayer] !== false;
+
     for (let i = 0; i < TOTAL_CELLS; i++) {
       const cIdx = i * 3;
       let r = 0.55;
       let g = 0.34;
       let b = 0.25;
 
-      // 1. Base NASA Layer Dataset Shader
+      // 1. Base NASA Layer Dataset Shader (High-Contrast Multi-Mission Palettes)
       if (activeLayer === 'topo') {
         const h = Math.max(0.0, Math.min(1.0, (elevs[i] - minElev) / spanElev));
-        r = 0.42 + h * 0.48;
-        g = 0.24 + h * 0.28;
-        b = 0.17 + h * 0.18;
+        r = 0.46 + h * 0.48;
+        g = 0.22 + h * 0.34;
+        b = 0.14 + h * 0.22;
         if (lit[i] === 0) {
-          r *= 0.62;
-          g *= 0.62;
-          b *= 0.72;
+          r *= 0.64;
+          g *= 0.64;
+          b *= 0.74;
         }
       } else if (activeLayer === 'themis') {
         const tNorm = Math.max(0.0, Math.min(1.0, (tiu[i] - 55.0) / 360.0));
-        // Loose sand (<100 TIU) warm orange-ochre; consolidated rock cool slate
-        r = 0.92 * (1.0 - tNorm) + 0.32 * tNorm;
-        g = 0.56 * (1.0 - tNorm) + 0.40 * tNorm;
-        b = 0.22 * (1.0 - tNorm) + 0.52 * tNorm;
+        // Loose drift sand (<100 TIU): vivid gold-amber; consolidated rock: deep cobalt-slate
+        r = 0.98 * (1.0 - tNorm) + 0.16 * tNorm;
+        g = 0.68 * (1.0 - tNorm) + 0.34 * tNorm;
+        b = 0.14 * (1.0 - tNorm) + 0.64 * tNorm;
         if (lit[i] === 0) {
-          r *= 0.58;
-          g *= 0.64;
-          b *= 0.88;
+          r *= 0.48;
+          g *= 0.72;
+          b = Math.min(1.0, b * 1.15);
         }
       } else if (activeLayer === 'crism') {
-        const m = crism[i];
-        r = 0.28 + m * 0.62;
-        g = 0.25 + (1.0 - Math.abs(m - 0.55) * 1.4) * 0.52;
-        b = 0.32 + m * 0.48;
+        const m = Math.max(0.0, Math.min(1.0, crism[i]));
+        // Low mineral basalt dark-teal -> emerald-jade -> vivid magenta-violet hydrated hotspots
+        if (m < 0.5) {
+          const u = m * 2.0;
+          r = 0.10 + u * 0.08;
+          g = 0.24 + u * 0.48;
+          b = 0.32 + u * 0.24;
+        } else {
+          const u = (m - 0.5) * 2.0;
+          r = 0.18 + u * 0.74;
+          g = 0.72 - u * 0.44;
+          b = 0.56 + u * 0.30;
+        }
       } else if (activeLayer === 'meda') {
         const gx = i % GRID_N;
         const gy = (i / GRID_N) | 0;
@@ -444,27 +455,34 @@ export class ThreeNavigationMap {
           0.0,
           Math.min(1.0, (0.35 + 0.65 * svf[i]) * (0.55 + windwardProj * 0.9) * (0.45 + 0.55 * windSpeedNorm))
         );
-        // High windward/katabatic chill: icy cyan (#38BDF8); sheltered leeward troughs: deep slate
-        r = 0.14 + exposure * 0.14;
-        g = 0.24 + exposure * 0.54;
-        b = 0.36 + exposure * 0.60;
+        // High windward/katabatic chill: electric ice-cyan; sheltered leeward troughs: deep slate-navy
+        r = 0.09 + exposure * 0.09;
+        g = 0.14 + exposure * 0.72;
+        b = 0.26 + exposure * 0.74;
       } else if (activeLayer === 'rad') {
-        const exp = svf[i];
+        const exp = Math.max(0.0, Math.min(1.0, svf[i]));
         if (state.sepStormActive) {
-          r = 0.25 + exp * 0.75;
-          g = 0.16 + (1.0 - exp) * 0.45;
-          b = 0.42 + (1.0 - exp) * 0.48;
+          r = 0.12 + exp * 0.86;
+          g = 0.62 - exp * 0.40;
+          b = 0.54 - exp * 0.06;
         } else {
-          r = 0.22 + exp * 0.42;
-          g = 0.36 + exp * 0.32;
-          b = 0.58 + (1.0 - exp) * 0.30;
+          r = 0.14 + exp * 0.64;
+          g = 0.28 + exp * 0.10;
+          b = 0.68 + exp * 0.24;
         }
       }
 
-      // Subtle 22% blend with Mars Trek / fallback orbital albedo
-      r = r * 0.78 + albedo[cIdx] * 0.22;
-      g = g * 0.78 + albedo[cIdx + 1] * 0.22;
-      b = b * 0.78 + albedo[cIdx + 2] * 0.22;
+      // If the active layer's hazard checkbox is unchecked, desaturate toward neutral Mars gray
+      if (!isActiveLayerEnabled) {
+        r = r * 0.55 + 0.46 * 0.45;
+        g = g * 0.55 + 0.45 * 0.45;
+        b = b * 0.55 + 0.47 * 0.45;
+      }
+
+      // Subtle 14% blend with Mars Trek / fallback orbital albedo
+      r = r * 0.86 + albedo[cIdx] * 0.14;
+      g = g * 0.86 + albedo[cIdx + 1] * 0.14;
+      b = b * 0.86 + albedo[cIdx + 2] * 0.14;
 
       // 2. Dynamic 3D Translucent Isochrone Contour Surface Fill (§2.6 + Red Zone Projection)
       const fVal = isExceeded ? returnCost[i] : totalField[i];
@@ -479,11 +497,12 @@ export class ThreeNavigationMap {
         g = g * 0.80 + COL_CAUTION[1] * 0.20;
         b = b * 0.80 + COL_CAUTION[2] * 0.20;
       } else {
-        // Exceeded / No-Return Red Zone: project visible crimson #FF453A tint onto exterior terrain
-        const redBlend = isExceeded ? 0.28 : 0.18;
-        r = r * 0.55 * (1.0 - redBlend) + COL_CRITICAL[0] * redBlend;
-        g = g * 0.55 * (1.0 - redBlend) + COL_CRITICAL[1] * redBlend;
-        b = b * 0.55 * (1.0 - redBlend) + COL_CRITICAL[2] * redBlend;
+        // Exceeded / No-Return Red Zone: preserve outer NASA layer color visibility while dimming
+        const extDim = isExceeded ? 0.62 : 0.78;
+        const redBlend = isExceeded ? 0.26 : 0.08;
+        r = r * extDim * (1.0 - redBlend) + COL_CRITICAL[0] * redBlend;
+        g = g * extDim * (1.0 - redBlend) + COL_CRITICAL[1] * redBlend;
+        b = b * extDim * (1.0 - redBlend) + COL_CRITICAL[2] * redBlend;
         if (state.layers.topo && slopes[i] > 33.0) {
           r = r * 0.28 + COL_CRITICAL[0] * 0.72;
           g = g * 0.28 + COL_CRITICAL[1] * 0.72;
