@@ -1,5 +1,5 @@
 /**
- * BioRadius — Martian EVA Bioenergetics, Thermoregulation & 4-System Triage (Module B)
+ * HALO Mars — Martian EVA Bioenergetics, Thermoregulation & 4-System Triage (Module B)
  * Unabridged Santee-Gernhardt / Apollo SP-368 partial-gravity locomotion (3.71 m/s²),
  * Stefan-Boltzmann radiative/convective thermal balance, and NASA-STD-3001 strain coupling.
  */

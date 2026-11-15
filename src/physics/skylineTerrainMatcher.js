@@ -1,5 +1,5 @@
 /**
- * BioRadius — Curvature-Corrected 360° DEM Skyline Ray-Marcher & NCC Matcher (Module D)
+ * HALO Mars — Curvature-Corrected 360° DEM Skyline Ray-Marcher & NCC Matcher (Module D)
  * Computes 36-azimuth horizon profiles with Martian spherical curvature + CO2 refraction
  * and localizes a visor skyline silhouette via a 25x25 coarse LUT + 5x5 fine refinement
  * + Parseval circular-harmonic upper-bound pruning across all 36 cyclic yaw shifts (< 1.8 ms).

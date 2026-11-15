@@ -1,5 +1,5 @@
 /**
- * BioRadius — Dual-Pass Directed Dijkstra & 16-Case Marching Squares (Module C)
+ * HALO Mars — Dual-Pass Directed Dijkstra & 16-Case Marching Squares (Module C)
  * Preallocates all typed arrays once at construction (0 B/frame GC in hot loops).
  */
 
@@ -844,9 +844,9 @@ export class RangeIsochroneSolver {
     return JSON.stringify(
       {
         type: 'FeatureCollection',
-        name: `BioRadius_${dem.id}_SafeReturn`,
+        name: `HALO_Mars_${dem.id}_SafeReturn`,
         metadata: {
-          generator: 'BioRadius EVA Telemetry & Planner',
+          generator: 'HALO Mars EVA Telemetry & Planner',
           exportedAtUtc: new Date().toISOString(),
           planetaryBody: 'Mars (IAU R=3389500m Planetocentric)',
           siteId: dem.id,
@@ -902,7 +902,7 @@ export class RangeIsochroneSolver {
 
     return [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<gpx version="1.1" creator="BioRadius EVA Telemetry &amp; Planner" xmlns="http://www.topografix.com/GPX/1/1">',
+      '<gpx version="1.1" creator="HALO Mars EVA Telemetry &amp; Planner" xmlns="http://www.topografix.com/GPX/1/1">',
       '  <metadata>',
       `    <name>${escapeXml(dem.name)} — Safe Return Corridor</name>`,
       `    <time>${timestamp}</time>`,

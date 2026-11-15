@@ -1,5 +1,5 @@
 /**
- * BioRadius — Live NASA Mars Client & Data Provenance State
+ * HALO Mars — Live NASA Mars Client & Data Provenance State
  * Attempts realtime fetches to NASA DONKI SEP and JPL Mars Trek WMTS.
  * Falls back cleanly to calibrated deterministic albedo imagery and discloses
  * exact runtime provenance without ever misrepresenting surrogates as raw PDS downloads.

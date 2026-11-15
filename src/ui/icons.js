@@ -1,5 +1,5 @@
 /**
- * BioRadius — Shared inline SVG icon helpers.
+ * HALO Mars — Shared inline SVG icon helpers.
  * Icons are defined once as hidden <symbol> elements in index.html and referenced
  * with <svg><use href="#icon-name"/></svg> so they inherit currentColor.
  */

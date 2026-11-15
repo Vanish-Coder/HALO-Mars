@@ -1,5 +1,5 @@
 /**
- * BioRadius — CR2032 Coin-Cell Microwatt Power Profiler & 1 Hz WebGL Power-Gating
+ * HALO Mars — CR2032 Coin-Cell Microwatt Power Profiler & 1 Hz WebGL Power-Gating
  * Models power draw across 60 Hz WebGL2 3D rendering vs. 1 Hz Always-On Watch Mode
  * powered by a single 3V, 220mAh CR2032 lithium coin cell.
  */

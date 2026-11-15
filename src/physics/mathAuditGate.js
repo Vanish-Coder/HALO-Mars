@@ -1,5 +1,5 @@
 /**
- * BioRadius — 7-Gate Automated Startup Verification Suite
+ * HALO Mars — 7-Gate Automated Startup Verification Suite
  * Executes real runtime assertions across coordinate parity, solar/SVF physics,
  * geotechnical cutoffs, directed slope asymmetry, bioenergetic monotonicity,
  * Dual-Pass Dijkstra invariants, and Skyline TRN identity matching.

@@ -1,5 +1,5 @@
 /**
- * BioRadius — 3D Martian Terrain & Dynamic Isochrone WebGL2 Stage (Three.js v0.170.0)
+ * HALO Mars — 3D Martian Terrain & Dynamic Isochrone WebGL2 Stage (Three.js v0.170.0)
  * Renders the 150x150 DEM mesh, 5 interactive NASA layer shaders, translucent isochrone
  * interior fill, Marching Squares contours, #0A84FF optimal return path, O(1) pin drag,
  * and CR2032 GPU power-gating.

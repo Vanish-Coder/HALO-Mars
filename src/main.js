@@ -1,5 +1,5 @@
 /**
- * BioRadius — Main Application Entrypoint & 4-Act Story Choreographer
+ * HALO Mars — Main Application Entrypoint & 4-Act Story Choreographer
  * Connects NASA surface datasets, live DONKI/Mars Trek clients, Dual-Pass Dijkstra solver,
  * 36-azimuth Skyline TRN matcher, 3D WebGL2 stage, Wayfinder Chronometer, and 7-gate audit.
  */
@@ -37,7 +37,7 @@ function escapeHtml(str) {
     .replaceAll('"', '&quot;');
 }
 
-const BLACKBOX_STORAGE_KEY = 'bioradius-blackbox-v1';
+const BLACKBOX_STORAGE_KEY = 'halomars-blackbox-v1';
 const BLACKBOX_CAP = 3600;
 const LIMITER_CODES = ['BIO', 'O2', 'BATT', 'RAD'];
 const SITE_CODES = ['MOUNT_SHARP_BOXWORK', 'JEZERO_DELTA', 'CUSTOM_MISSION_DEM'];
@@ -78,7 +78,7 @@ export function parseBleHeartRateMeasurement(dataView) {
   return dataView.getUint8(1);
 }
 
-class BioRadiusApp {
+class HaloMarsApp {
   constructor() {
     this.datasetCache = new Map();
     this.activeSiteId = 'MOUNT_SHARP_BOXWORK';
@@ -1191,7 +1191,7 @@ class BioRadiusApp {
     if (!this.dom.provenanceDialogBody) return;
     const snap = this.liveClient.getProvenanceSnapshot();
     const friendlyModeNote = snap.customDemActive
-      ? 'Using your uploaded terrain map with BioRadius physics'
+      ? 'Using your uploaded terrain map with HALO Mars physics'
       : snap.trekLive && snap.donkiLive
         ? 'Connected to live NASA orbital map + live solar-storm feed, paired with built-in Mars terrain layers'
         : snap.donkiLive
@@ -1239,7 +1239,7 @@ class BioRadiusApp {
                 <span class="layer-tooltip" role="tooltip">
                   <strong>Live Internet Connection:</strong><br>
                   • <strong>Live Connected:</strong> Your browser just downloaded fresh orbital imagery or solar-storm telemetry directly from NASA/JPL servers (browser image/data access permitted).<br>
-                  • <strong>Offline Backup:</strong> NASA servers were unreachable or offline, so BioRadius switched smoothly to its built-in fallback.
+                  • <strong>Offline Backup:</strong> NASA servers were unreachable or offline, so HALO Mars switched smoothly to its built-in fallback.
                 </span>
               </span>
             </th>
@@ -1401,7 +1401,7 @@ class BioRadiusApp {
         actNum: 1,
         kicker: '30S MISSION STORY • ACT 1 OF 4 (0:00–0:07)',
         title: 'Act 1 · 5 Layered NASA Mars Maps & Live Safe Return Zone',
-        body: 'BioRadius fuses 5 NASA datasets on Mount Sharp to draw the green Safe Zone (<75% reserve), amber Caution zone, and blue energy-optimal Return Route back to Base.',
+        body: 'HALO Mars fuses 5 NASA datasets on Mount Sharp to draw the green Safe Zone (<75% reserve), amber Caution zone, and blue energy-optimal Return Route back to Base.',
         liveText: STORY_ACT1_LAYER_NOTES.topo,
         tone: 'safe',
         progressPct: 12
@@ -1500,7 +1500,7 @@ class BioRadiusApp {
         actNum: 3,
         kicker: '30S MISSION STORY • ACT 3 OF 4 (0:16–0:23)',
         title: 'Act 3 · Solar Radiation Storm Shelter & 1 Hz Watch Battery Saver',
-        body: 'NASA DONKI SEP storm alert triggers a pullback toward WP-2 canyon shelter while BioRadius pauses the 60 Hz 3D GPU to run the wrist Watchfinder at 1 Hz.',
+        body: 'NASA DONKI SEP storm alert triggers a pullback toward WP-2 canyon shelter while HALO Mars pauses the 60 Hz 3D GPU to run the wrist Watchfinder at 1 Hz.',
         liveText: 'Power Gated: 0.0 mW 3D GPU • 42.3 mW total draw extends emergency navigation to 15.6 hrs on one CR2032 coin cell.',
         tone: 'caution',
         progressPct: 75
@@ -2005,7 +2005,7 @@ class BioRadiusApp {
       this.state,
       this.lastHeroMetrics
     );
-    const filename = `bioradius_${this.activeSiteId.toLowerCase()}_perimeter.geojson`;
+    const filename = `halomars_${this.activeSiteId.toLowerCase()}_perimeter.geojson`;
     this.downloadTextFile(filename, json, 'application/geo+json');
     if (this.dom.exportStatus) {
       this.dom.exportStatus.innerHTML = `${iconSvg('download', 'ui-icon ui-icon-sm')} Downloaded ${escapeHtml(filename)} (Safe Zone Map)`;
@@ -2015,7 +2015,7 @@ class BioRadiusApp {
 
   downloadGpxReturnCorridor() {
     const gpx = this.solver.exportReturnCorridorGpx(this.activeDem, this.state);
-    const filename = `bioradius_${this.activeSiteId.toLowerCase()}_return.gpx`;
+    const filename = `halomars_${this.activeSiteId.toLowerCase()}_return.gpx`;
     this.downloadTextFile(filename, gpx, 'application/gpx+xml');
     if (this.dom.exportStatus) {
       this.dom.exportStatus.innerHTML = `${iconSvg('download', 'ui-icon ui-icon-sm')} Downloaded ${escapeHtml(filename)} (Return Route GPX)`;
@@ -2025,7 +2025,7 @@ class BioRadiusApp {
 
   downloadBlackBoxCsv() {
     const csv = this.exportBlackBoxCsv();
-    const filename = `bioradius_${this.activeSiteId.toLowerCase()}_flight_surgeon.csv`;
+    const filename = `halomars_${this.activeSiteId.toLowerCase()}_flight_surgeon.csv`;
     this.downloadTextFile(filename, csv, 'text/csv');
     if (this.dom.exportStatus) {
       this.dom.exportStatus.innerHTML = `${iconSvg('download', 'ui-icon ui-icon-sm')} Downloaded ${escapeHtml(filename)} (${this.blackBox.count}s log)`;
@@ -2050,5 +2050,5 @@ class BioRadiusApp {
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  window.bioRadiusApp = new BioRadiusApp();
+  window.haloMarsApp = new HaloMarsApp();
 }

@@ -1,5 +1,5 @@
 /**
- * BioRadius — Hero Status Card, Wayfinder Watch Chronometer & Collapsible Telemetry Drawers
+ * HALO Mars — Hero Status Card, Wayfinder Watch Chronometer & Collapsible Telemetry Drawers
  * Renders Apple Watch Ultra Wayfinder dial, CR2032 1Hz Always-On monochrome mode,
  * 360° DEM vs. Visor Skyline waveform, and 4-system NASA-STD-3001 triage sparklines with zero GC.
  */

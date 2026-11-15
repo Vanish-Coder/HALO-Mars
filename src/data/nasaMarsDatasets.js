@@ -1,5 +1,5 @@
 /**
- * BioRadius — Martian Surface Datasets & Coordinate Parity (Module A)
+ * HALO Mars — Martian Surface Datasets & Coordinate Parity (Module A)
  * Calibrated Parametric PDS Surrogates bounded strictly to published NASA PDS ranges.
  * All arrays are co-registered 150x150 row-major typed arrays (22,500 nodes).
  */
