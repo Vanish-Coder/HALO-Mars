@@ -141,36 +141,45 @@ export class ThreeNavigationMap {
     this.baseGroup.add(baseBody, baseRing);
     this.scene.add(this.baseGroup);
 
-    // Astronaut EVA Pin + Invisible Drag Hit Sphere
-    this.astroGroup = new THREE.Group();
-    this.astroCoreMat = new THREE.MeshStandardMaterial({
-      color: 0x30d158,
-      emissive: 0x1e8f3c,
-      emissiveIntensity: 0.75,
-      roughness: 0.25
+    // Astronaut EVA Marker (status sprite) + Ground Halo + Invisible Drag Hit Sphere
+    const astroTexLoader = new THREE.TextureLoader();
+    const loadAstroTex = (path) => {
+      const tex = astroTexLoader.load(path);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    };
+    // foot = fraction of texture height above the bottom edge where the boots stand
+    // textures are 669x373 (w:h ≈ 1.793); sprite scale preserves that aspect ratio
+    this.astroAssets = {
+      SAFE: { tex: loadAstroTex('assets/green-astronaut.png'), foot: 0.056 },
+      CAUTION: { tex: loadAstroTex('assets/yellow-astronaut.png'), foot: 0.059 },
+      EXCEEDED: { tex: loadAstroTex('assets/red-astronaut.png'), foot: 0.054 }
+    };
+    this.astroSpriteMat = new THREE.SpriteMaterial({
+      map: this.astroAssets.SAFE.tex,
+      transparent: true,
+      depthWrite: false
     });
-    const astroOrb = new THREE.Mesh(new THREE.SphereGeometry(68, 20, 20), this.astroCoreMat);
-    astroOrb.position.y = 95;
-    const astroStem = new THREE.Mesh(
-      new THREE.CylinderGeometry(12, 12, 95, 12),
-      new THREE.MeshBasicMaterial({ color: 0xffffff })
-    );
-    astroStem.position.y = 47;
-    this.astroHaloMat = new THREE.MeshBasicMaterial({
+    this.astroSprite = new THREE.Sprite(this.astroSpriteMat);
+    this.astroSprite.scale.set(760, 424, 1);
+    this.astroSprite.center.set(0.5, 0.056);
+    const astroHaloMat = new THREE.MeshBasicMaterial({
       color: 0x30d158,
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.72
     });
-    const astroHalo = new THREE.Mesh(new THREE.RingGeometry(90, 132, 32), this.astroHaloMat);
+    const astroHalo = new THREE.Mesh(new THREE.RingGeometry(90, 132, 32), astroHaloMat);
     astroHalo.rotation.x = -Math.PI / 2;
     astroHalo.position.y = 4;
+    this.astroHaloMat = astroHaloMat;
     this.astroHitMesh = new THREE.Mesh(
       new THREE.SphereGeometry(240, 12, 12),
       new THREE.MeshBasicMaterial({ visible: false })
     );
     this.astroHitMesh.position.y = 70;
-    this.astroGroup.add(astroOrb, astroStem, astroHalo, this.astroHitMesh);
+    this.astroGroup = new THREE.Group();
+    this.astroGroup.add(this.astroSprite, astroHalo, this.astroHitMesh);
     this.scene.add(this.astroGroup);
 
     // 3 Science Waypoint Beacons
@@ -552,14 +561,20 @@ export class ThreeNavigationMap {
     const astroWorld = gridToWorld(state.astroGx, state.astroGy, elevs[astroIdx], OVERLAY_Y_OFFSET);
     this.astroGroup.position.set(astroWorld.x, astroWorld.y, astroWorld.z);
 
-    const statusHex =
+    const statusKey =
       heroMetrics.status === 'EXCEEDED'
-        ? 0xff453a
+        ? 'EXCEEDED'
         : heroMetrics.status === 'CAUTION'
-          ? 0xff9f0a
-          : 0x30d158;
-    this.astroCoreMat.color.setHex(statusHex);
-    this.astroCoreMat.emissive.setHex(statusHex);
+          ? 'CAUTION'
+          : 'SAFE';
+    const astroAsset = this.astroAssets[statusKey];
+    if (astroAsset && this.astroSpriteMat.map !== astroAsset.tex) {
+      this.astroSpriteMat.map = astroAsset.tex;
+      this.astroSpriteMat.needsUpdate = true;
+      this.astroSprite.center.set(0.5, astroAsset.foot);
+    }
+    const statusHex =
+      statusKey === 'EXCEEDED' ? 0xff453a : statusKey === 'CAUTION' ? 0xff9f0a : 0x30d158;
     this.astroHaloMat.color.setHex(statusHex);
 
     if (this.ecoMode) {
