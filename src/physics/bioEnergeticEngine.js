@@ -93,7 +93,7 @@ export function createDefaultState() {
     suitMassKg: 50.0,
     sampleMassKg: 15.0,
     suitAndSampleMassKg: 65.0,
-    calorieReserveKcal: 350,
+    calorieReserveKcal: 750,
     o2ReserveKg: 0.52,
     batteryWh: 780,
     nominalSpeedMs: 1.15,
