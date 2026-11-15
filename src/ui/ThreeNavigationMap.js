@@ -231,12 +231,16 @@ export class ThreeNavigationMap {
 
     dom.addEventListener('pointerdown', (ev) => {
       if (!this.activeDem) return;
+      this._downX = ev.clientX;
+      this._downY = ev.clientY;
+      this._mapClickPending = true;
       updateNdc(ev);
       this.raycaster.setFromCamera(this.pointerNdc, this.camera);
 
       const astroHits = this.raycaster.intersectObject(this.astroHitMesh, false);
       if (astroHits.length > 0) {
         this.isDraggingAstro = true;
+        this._mapClickPending = false;
         this.controls.enabled = false;
         this.groundDragPlane.constant = -this.astroGroup.position.y;
         dom.style.cursor = 'grabbing';
@@ -245,13 +249,16 @@ export class ThreeNavigationMap {
       }
 
       const wpHits = this.raycaster.intersectObjects(this.waypointMeshes, true);
-      if (wpHits.length > 0 && this.onWaypointClick) {
-        let obj = wpHits[0].object;
-        while (obj && obj.userData.wpIndex === undefined) {
-          obj = obj.parent;
-        }
-        if (obj && obj.userData.wpIndex !== undefined) {
-          this.onWaypointClick(obj.userData.wpIndex);
+      if (wpHits.length > 0) {
+        this._mapClickPending = false;
+        if (this.onWaypointClick) {
+          let obj = wpHits[0].object;
+          while (obj && obj.userData.wpIndex === undefined) {
+            obj = obj.parent;
+          }
+          if (obj && obj.userData.wpIndex !== undefined) {
+            this.onWaypointClick(obj.userData.wpIndex);
+          }
         }
       }
     });
@@ -286,6 +293,35 @@ export class ThreeNavigationMap {
         dom.style.cursor = 'default';
         if (dom.hasPointerCapture(ev.pointerId)) {
           dom.releasePointerCapture(ev.pointerId);
+        }
+      }
+
+      // Click (not drag) on open terrain teleports the astronaut marker there
+      if (
+        this._mapClickPending &&
+        Math.hypot(ev.clientX - this._downX, ev.clientY - this._downY) <= 6
+      ) {
+        this._mapClickPending = false;
+        updateNdc(ev);
+        this.raycaster.setFromCamera(this.pointerNdc, this.camera);
+
+        const markerHits = this.raycaster.intersectObjects(
+          [this.astroHitMesh, ...this.waypointMeshes],
+          true
+        );
+        const terrainHits = this.raycaster.intersectObject(this.terrainMesh, false);
+        if (
+          terrainHits.length > 0 &&
+          (markerHits.length === 0 || markerHits[0].distance > terrainHits[0].distance)
+        ) {
+          const { gx, gy, idx } = worldToGrid(terrainHits[0].point.x, terrainHits[0].point.z);
+          const wx = (gx - BASE_GX) * CELL_M;
+          const wz = (gy - BASE_GY) * CELL_M;
+          const wy = this.activeDem.elevations[idx] + OVERLAY_Y_OFFSET;
+          this.astroGroup.position.set(wx, wy, wz);
+          if (this.onAstroDrag) {
+            this.onAstroDrag(gx, gy);
+          }
         }
       }
     };
