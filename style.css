@@ -2165,3 +2165,122 @@ input[type="range"]::-webkit-slider-thumb {
   }
 }
 
+
+/* ---------------------------------------------------------------------------
+   Icon system & UI polish
+--------------------------------------------------------------------------- */
+.ui-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  vertical-align: -0.12em;
+  pointer-events: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ui-icon-sm {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.ui-icon-lg {
+  width: 1.3em;
+  height: 1.3em;
+}
+
+/* Icon-bearing buttons align icon + label consistently */
+.seg-btn:has(.ui-icon),
+.hud-pill:has(.ui-icon),
+.ops-action-btn:has(.ui-icon),
+.sample-btn:has(.ui-icon),
+.eco-toggle-btn:has(.ui-icon),
+.story-act-pill:has(.ui-icon),
+.wp-jump-btn:has(.ui-icon),
+.sar-pill:has(.ui-icon),
+.layer-shader-btn:has(.ui-icon),
+.theme-toggle-btn:has(.ui-icon),
+.dialog-close:has(.ui-icon),
+.story-caption-close:has(.ui-icon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.guide-page-title,
+.ops-header-title h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deliverable-tag > span:first-child,
+.guide-list strong:has(.ui-icon) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Focus visibility for icon controls */
+.seg-btn:focus-visible,
+.hud-pill:focus-visible,
+.ops-action-btn:focus-visible,
+.sample-btn:focus-visible,
+.eco-toggle-btn:focus-visible,
+.story-act-pill:focus-visible,
+.wp-jump-btn:focus-visible,
+.sar-pill:focus-visible,
+.layer-shader-btn:focus-visible,
+.theme-toggle-btn:focus-visible,
+.dialog-close:focus-visible,
+.story-caption-close:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* Header wrap & compactness */
+.header-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.legend-strip {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .brand-subtitle {
+    display: none;
+  }
+  .brand-title {
+    font-size: 14px;
+  }
+}
+
+/* Stack workspace vertically on narrow screens */
+@media (max-width: 1024px) {
+  .workspace-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(300px, 1fr) auto;
+  }
+  #flight-dock {
+    max-height: 44vh;
+  }
+  .hud-top-right .legend-strip {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .hud-top-right {
+    display: none;
+  }
+  .hud-top-left {
+    max-width: calc(100% - 24px);
+  }
+}

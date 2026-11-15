@@ -27,6 +27,7 @@ import { computePowerProfile } from './physics/coinCellPowerProfiler.js';
 import { runMathAuditSuite } from './physics/mathAuditGate.js';
 import { ThreeNavigationMap } from './ui/ThreeNavigationMap.js';
 import { AstronautChronometer } from './ui/AstronautChronometer.js';
+import { iconSvg, LAYER_ICON_NAMES } from './ui/icons.js';
 
 function escapeHtml(str) {
   return String(str ?? '')
@@ -41,18 +42,18 @@ const BLACKBOX_CAP = 3600;
 const LIMITER_CODES = ['BIO', 'O2', 'BATT', 'RAD'];
 const SITE_CODES = ['MOUNT_SHARP_BOXWORK', 'JEZERO_DELTA', 'CUSTOM_MISSION_DEM'];
 const LAYER_COLOR_KEYS = {
-  topo: '⛰️ HiRISE: Rust/Ochre Relief • Red = >33° Impassable Cliffs',
-  themis: '🏜️ THEMIS: Gold = Loose Drift Sand • Cool Blue = Solid Rock & Frost',
-  crism: '🪨 CRISM: Dark Teal = Low • Green → Magenta = Hydrated Minerals',
-  meda: '💨 MEDA: Ice Cyan = High Katabatic Wind • Dark = Sheltered Lee',
-  rad: '☀️ RAD: Deep Indigo = Canyon Shelter (SVF) • Magenta/Red = Exposed Plain'
+  topo: 'HiRISE: Rust/Ochre Relief • Red = >33° Impassable Cliffs',
+  themis: 'THEMIS: Gold = Loose Drift Sand • Cool Blue = Solid Rock & Frost',
+  crism: 'CRISM: Dark Teal = Low • Green → Magenta = Hydrated Minerals',
+  meda: 'MEDA: Ice Cyan = High Katabatic Wind • Dark = Sheltered Lee',
+  rad: 'RAD: Deep Indigo = Canyon Shelter (SVF) • Magenta/Red = Exposed Plain'
 };
 const STORY_ACT1_LAYER_NOTES = {
-  topo: 'Now Showing Layer 1/5: ⛰️ HiRISE Steep Cliffs — red slopes (>33°) are blocked so routes detour safely.',
-  themis: 'Now Showing Layer 2/5: 🏜️ THEMIS Loose Sand — gold drift traps burn extra leg energy vs. cool blue bedrock.',
-  crism: 'Now Showing Layer 3/5: 🪨 CRISM Hydrated Clay — highlights clay science outcrops & surface dust drag.',
-  meda: 'Now Showing Layer 4/5: 💨 MEDA Slope Wind — visualizes katabatic headwinds vs. calm canyon lee.',
-  rad: 'Now Showing Layer 5/5: ☀️ RAD Shielding — compares canyon wall radiation shelter vs. exposed plains.'
+  topo: 'Now Showing Layer 1/5: HiRISE Steep Cliffs — red slopes (>33°) are blocked so routes detour safely.',
+  themis: 'Now Showing Layer 2/5: THEMIS Loose Sand — gold drift traps burn extra leg energy vs. cool blue bedrock.',
+  crism: 'Now Showing Layer 3/5: CRISM Hydrated Clay — highlights clay science outcrops & surface dust drag.',
+  meda: 'Now Showing Layer 4/5: MEDA Slope Wind — visualizes katabatic headwinds vs. calm canyon lee.',
+  rad: 'Now Showing Layer 5/5: RAD Shielding — compares canyon wall radiation shelter vs. exposed plains.'
 };
 const STORY_LAYER_SHORT_LABELS = {
   topo: 'HiRISE Cliffs',
@@ -776,18 +777,18 @@ class BioRadiusApp {
   updateProvenancePillUi() {
     if (!this.dom.provenancePill) return;
     const lc = this.liveClient;
-    let shortLabel = '📡 Data: Mars Sim (Offline)';
+    let shortLabel = 'Data: Mars Sim (Offline)';
     if (lc.customDemActive) {
-      shortLabel = '🛰️ Data: Custom DEM';
+      shortLabel = 'Data: Custom DEM';
     } else if (lc.trekLive && lc.donkiLive) {
-      shortLabel = '🛰️ Data: Live NASA (WMTS + DONKI)';
+      shortLabel = 'Data: Live NASA (WMTS + DONKI)';
     } else if (lc.donkiLive) {
-      shortLabel = '🛰️ Data: Live NASA DONKI';
+      shortLabel = 'Data: Live NASA DONKI';
     } else if (lc.trekLive) {
-      shortLabel = '🛰️ Data: Live Mars Trek';
+      shortLabel = 'Data: Live Mars Trek';
     }
 
-    this.dom.provenancePill.textContent = shortLabel;
+    this.dom.provenancePill.innerHTML = `${iconSvg('radio', 'ui-icon ui-icon-sm')} ${escapeHtml(shortLabel)}`;
     this.dom.provenancePill.title = `${lc.getProvenanceLabel()} (Click for details)`;
     this.dom.provenancePill.classList.toggle(
       'is-live',
@@ -893,9 +894,9 @@ class BioRadiusApp {
       const key = this.state.activeLayer || 'topo';
       const isEnabled = this.state.layers[key] !== false;
       const baseDesc = LAYER_COLOR_KEYS[key] || LAYER_COLOR_KEYS.topo;
-      this.dom.activeLayerKey.textContent = isEnabled
-        ? baseDesc
-        : `${baseDesc} (Bypassed in Route)`;
+      const iconName = LAYER_ICON_NAMES[key] || 'mountain';
+      const desc = isEnabled ? baseDesc : `${baseDesc} (Bypassed in Route)`;
+      this.dom.activeLayerKey.innerHTML = `${iconSvg(iconName, 'ui-icon ui-icon-sm')} ${escapeHtml(desc)}`;
       this.dom.activeLayerKey.classList.toggle('is-bypassed', !isEnabled);
     }
   }
@@ -999,7 +1000,8 @@ class BioRadiusApp {
     }
     if (this.dom.themeToggleBtn) {
       const nextModeLabel = isLight ? 'Switch to Dark Mode' : 'Switch to Lite Mode';
-      this.dom.themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
+      const iconName = isLight ? 'moon' : 'sun';
+      this.dom.themeToggleBtn.innerHTML = iconSvg(iconName, 'ui-icon');
       this.dom.themeToggleBtn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
       this.dom.themeToggleBtn.setAttribute('aria-label', nextModeLabel);
       this.dom.themeToggleBtn.title = nextModeLabel;
@@ -1146,9 +1148,11 @@ class BioRadiusApp {
   renderAuditUi() {
     const rep = this.auditReport;
     if (this.dom.auditPill) {
-      this.dom.auditPill.textContent = rep.allPassed
-        ? '✅ System Check'
-        : `⚠️ System Check (${rep.passedCount}/${rep.totalCount})`;
+      const iconName = rep.allPassed ? 'check-circle' : 'alert-triangle';
+      const label = rep.allPassed
+        ? 'System Check'
+        : `System Check (${rep.passedCount}/${rep.totalCount})`;
+      this.dom.auditPill.innerHTML = `${iconSvg(iconName, 'ui-icon ui-icon-sm')} ${escapeHtml(label)}`;
       this.dom.auditPill.classList.toggle('is-fail', !rep.allPassed);
     }
 
@@ -1317,7 +1321,7 @@ class BioRadiusApp {
     if (this._storyRunning) {
       this._storyRunning = false;
       if (this.dom.playStoryBtn) {
-        this.dom.playStoryBtn.textContent = '▶ Play 30s Story';
+        this.dom.playStoryBtn.innerHTML = `${iconSvg('play', 'ui-icon ui-icon-sm')} Play 30s Story`;
       }
       if (this.dom.actIndicator) {
         this.dom.actIndicator.textContent = 'EVA & ROUTE TELEMETRY';
@@ -1330,7 +1334,7 @@ class BioRadiusApp {
     this.interruptStory();
     this._storyRunning = true;
     if (this.dom.playStoryBtn) {
-      this.dom.playStoryBtn.textContent = '■ Stop Story';
+      this.dom.playStoryBtn.innerHTML = `${iconSvg('stop', 'ui-icon ui-icon-sm')} Stop Story`;
     }
 
     this.runStoryAct(1, { animateRamp: true });
@@ -1340,14 +1344,14 @@ class BioRadiusApp {
     this._storyTimers.push(
       setTimeout(() => {
         this._storyRunning = false;
-        if (this.dom.playStoryBtn) this.dom.playStoryBtn.textContent = '▶ Play 30s Story';
+        if (this.dom.playStoryBtn) this.dom.playStoryBtn.innerHTML = `${iconSvg('play', 'ui-icon ui-icon-sm')} Play 30s Story`;
         if (this.dom.actIndicator) this.dom.actIndicator.textContent = 'STORY COMPLETE • LIVE';
         this.updateStoryBanner({
           actNum: 0,
           kicker: '30S MISSION STORY COMPLETE',
           title: 'All 4 Acts Demonstrated — Interactive Mars Sandbox Ready',
           body: 'You can replay any story chapter above, toggle NASA layers at the bottom, switch between Mount Sharp and Jezero, or drag the astronaut pin on the 3D terrain.',
-          liveText: 'Click Act 1–4 above to inspect a chapter, drag the astronaut pin, or click ✕ to dismiss.',
+          liveText: 'Click Act 1–4 above to inspect a chapter, drag the astronaut pin, or click × to dismiss.',
           tone: 'jezero',
           progressPct: 100
         });
@@ -1590,7 +1594,7 @@ class BioRadiusApp {
       this.ingestAndSwitchCustomDem(file.name, payload);
     } catch (err) {
       if (this.dom.demIngestStatus) {
-        this.dom.demIngestStatus.textContent = `❌ DEM ingest failed: ${err?.message || err}`;
+        this.dom.demIngestStatus.innerHTML = `${iconSvg('x', 'ui-icon ui-icon-sm')} DEM ingest failed: ${escapeHtml(err?.message || err)}`;
       }
     }
   }
@@ -1609,7 +1613,7 @@ class BioRadiusApp {
     }
     this.switchSite('CUSTOM_MISSION_DEM', { skipSolve: false });
     if (this.dom.demIngestStatus) {
-      this.dom.demIngestStatus.textContent = `✅ Loaded ${dem.sourceFileName} (${dem.sourceFormat}, ${dem.sourceDimensions} fit to 150×150) in ${dem.ingestElapsedMs} ms | Elev ${dem.elevRangeLabel}`;
+      this.dom.demIngestStatus.innerHTML = `${iconSvg('check', 'ui-icon ui-icon-sm')} Loaded ${escapeHtml(dem.sourceFileName)} (${escapeHtml(dem.sourceFormat)}, ${escapeHtml(dem.sourceDimensions)} fit to 150×150) in ${dem.ingestElapsedMs} ms | Elev ${escapeHtml(dem.elevRangeLabel)}`;
     }
     return dem;
   }
@@ -1805,31 +1809,33 @@ class BioRadiusApp {
 
   updateHwStatusUi(overrideMsg = null) {
     if (this.dom.btnPairBle) {
-      this.dom.btnPairBle.textContent = this._bleStreaming
-        ? '🔌 Disconnect Heart Rate'
-        : '🫀 Connect Heart Rate (Bluetooth)';
+      this.dom.btnPairBle.innerHTML = this._bleStreaming
+        ? `${iconSvg('x', 'ui-icon ui-icon-sm')} Disconnect Heart Rate`
+        : `${iconSvg('heart', 'ui-icon ui-icon-sm')} Connect Heart Rate (Bluetooth)`;
       this.dom.btnPairBle.classList.toggle('is-live-ops', this._bleStreaming);
     }
     if (this.dom.btnLinkImu) {
-      this.dom.btnLinkImu.textContent = this._imuActive
-        ? '🛑 Disconnect Compass & GPS'
-        : '🧭 Connect Compass & GPS';
+      this.dom.btnLinkImu.innerHTML = this._imuActive
+        ? `${iconSvg('x', 'ui-icon ui-icon-sm')} Disconnect Compass & GPS`
+        : `${iconSvg('compass', 'ui-icon ui-icon-sm')} Connect Compass & GPS`;
       this.dom.btnLinkImu.classList.toggle('is-live-ops', this._imuActive);
     }
     if (!this.dom.hwModeStatus) return;
     if (overrideMsg) {
-      this.dom.hwModeStatus.textContent = overrideMsg;
+      this.dom.hwModeStatus.innerHTML = escapeHtml(overrideMsg);
       return;
     }
     const parts = [];
-    if (this._bleStreaming) parts.push('🟢 Bluetooth Heart Rate Connected (HR slider locked)');
+    if (this._bleStreaming) parts.push(`${iconSvg('check-circle', 'ui-icon ui-icon-sm')} Bluetooth Heart Rate Connected (HR slider locked)`);
     if (this._imuActive) {
       const hdg =
         this._imuHeadingDeg !== null ? `${Math.round(this._imuHeadingDeg)}°` : 'waiting orientation';
-      parts.push(`🧭 Compass & GPS Connected (${hdg})`);
+      parts.push(`${iconSvg('compass', 'ui-icon ui-icon-sm')} Compass & GPS Connected (${hdg})`);
     }
-    this.dom.hwModeStatus.textContent =
-      parts.length > 0 ? parts.join(' • ') : '🎛️ Simulation Mode Active (Manual sliders unlocked)';
+    this.dom.hwModeStatus.innerHTML =
+      parts.length > 0
+        ? parts.join(' • ')
+        : `${iconSvg('sliders', 'ui-icon ui-icon-sm')} Simulation Mode Active (Manual sliders unlocked)`;
   }
 
   recordBlackBoxFrame() {
@@ -1920,9 +1926,9 @@ class BioRadiusApp {
       this.syncControlsFromState();
       this.lastSkylineKey = '';
       this.executeSolveNow({ forcePass1: true, refreshAttribution: true, skipSkyline: false });
-      this.updateOpsStatusUi(`✅ Restored session from ${snap.savedAtUtc}`);
+      this.updateOpsStatusUi(`${iconSvg('check', 'ui-icon ui-icon-sm')} Restored session from ${escapeHtml(snap.savedAtUtc)}`);
     } catch (err) {
-      this.updateOpsStatusUi(`❌ Restore failed: ${err?.message || err}`);
+      this.updateOpsStatusUi(`${iconSvg('x', 'ui-icon ui-icon-sm')} Restore failed: ${escapeHtml(err?.message || err)}`);
     }
   }
 
@@ -1934,13 +1940,13 @@ class BioRadiusApp {
     } catch {
       // Ignore
     }
-    this.updateOpsStatusUi('🧹 Saved mission history cleared.');
+    this.updateOpsStatusUi(`${iconSvg('trash', 'ui-icon ui-icon-sm')} Saved mission history cleared.`);
   }
 
   updateOpsStatusUi(blackBoxOverride = null) {
     if (!this.dom.blackboxStatus) return;
     if (blackBoxOverride) {
-      this.dom.blackboxStatus.textContent = blackBoxOverride;
+      this.dom.blackboxStatus.innerHTML = blackBoxOverride;
       return;
     }
     let savedNote = 'none saved yet';
@@ -1955,7 +1961,7 @@ class BioRadiusApp {
     } catch {
       // Ignore
     }
-    this.dom.blackboxStatus.textContent = `${this.blackBox.count}s / ${this.blackBox.cap}s recorded • ${savedNote}`;
+    this.dom.blackboxStatus.innerHTML = `${this.blackBox.count}s / ${this.blackBox.cap}s recorded • ${escapeHtml(savedNote)}`;
   }
 
   /**
@@ -2002,7 +2008,7 @@ class BioRadiusApp {
     const filename = `bioradius_${this.activeSiteId.toLowerCase()}_perimeter.geojson`;
     this.downloadTextFile(filename, json, 'application/geo+json');
     if (this.dom.exportStatus) {
-      this.dom.exportStatus.textContent = `✅ Downloaded ${filename} (Safe Zone Map)`;
+      this.dom.exportStatus.innerHTML = `${iconSvg('download', 'ui-icon ui-icon-sm')} Downloaded ${escapeHtml(filename)} (Safe Zone Map)`;
     }
     return json;
   }
@@ -2012,7 +2018,7 @@ class BioRadiusApp {
     const filename = `bioradius_${this.activeSiteId.toLowerCase()}_return.gpx`;
     this.downloadTextFile(filename, gpx, 'application/gpx+xml');
     if (this.dom.exportStatus) {
-      this.dom.exportStatus.textContent = `✅ Downloaded ${filename} (Return Route GPX)`;
+      this.dom.exportStatus.innerHTML = `${iconSvg('download', 'ui-icon ui-icon-sm')} Downloaded ${escapeHtml(filename)} (Return Route GPX)`;
     }
     return gpx;
   }
@@ -2022,7 +2028,7 @@ class BioRadiusApp {
     const filename = `bioradius_${this.activeSiteId.toLowerCase()}_flight_surgeon.csv`;
     this.downloadTextFile(filename, csv, 'text/csv');
     if (this.dom.exportStatus) {
-      this.dom.exportStatus.textContent = `✅ Downloaded ${filename} (${this.blackBox.count}s log)`;
+      this.dom.exportStatus.innerHTML = `${iconSvg('download', 'ui-icon ui-icon-sm')} Downloaded ${escapeHtml(filename)} (${this.blackBox.count}s log)`;
     }
     return csv;
   }
