@@ -1,5 +1,7 @@
 # [HALO Mars](https://halomars.pages.dev/)
 
+## Presentation: https://vanish-coder.github.io/HALO-Mars/
+
 Up to 22 light-minutes from Earth, with no GPS or emergency extraction,
 Martian astronauts need to be completely self-sufficient to survive.
 
