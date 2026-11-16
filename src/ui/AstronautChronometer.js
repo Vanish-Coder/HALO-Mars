@@ -185,7 +185,7 @@ export class AstronautChronometer {
       ctx.font = '700 19px ui-monospace, SFMono-Regular, Menlo, monospace';
       ctx.fillText(`EVA ${formatEvaClock(evaSec)}`, cx, cy + 34);
       ctx.font = '600 14px ui-monospace, SFMono-Regular, Menlo, monospace';
-      ctx.fillText('14.1 mA • 15.6 HRS', cx, cy + 62);
+      ctx.fillText('14.1 mA • 5.6 HRS', cx, cy + 62);
       return;
     }
 
