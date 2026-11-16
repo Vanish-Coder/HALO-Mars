@@ -428,6 +428,31 @@
       font-weight: 700;
     }
 
+    .slide-live-app-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      vertical-align: middle;
+      margin-left: 10px;
+      padding: 3px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      background: linear-gradient(135deg, #0a84ff, #0055d4);
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 2px 8px rgba(10, 132, 255, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .slide-live-app-pill:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 4px 14px rgba(10, 132, 255, 0.55);
+    }
+
     .slide-subtitle {
       font-size: clamp(13px, 1.25vw, 15.5px);
       font-weight: 500;
@@ -847,9 +872,9 @@
       <nav class="slide-tabs" role="tablist" aria-label="Presentation Slides">
         <button type="button" class="slide-tab active" role="tab" aria-selected="true" data-go-slide="0">01 · Mission</button>
         <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="1">02 · 5 Layers</button>
-        <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="2">03 · Solver</button>
-        <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="3">04 · Watch 1Hz</button>
-        <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="4">05 · Zero-GPS</button>
+        <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="2">03 · Safe Return</button>
+        <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="3">04 · Eco Mode</button>
+        <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="4">05 · Zero GPS</button>
         <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="5">06 · BYOD</button>
         <button type="button" class="slide-tab" role="tab" aria-selected="false" data-go-slide="6">07 · Dual use</button>
       </nav>
@@ -857,7 +882,7 @@
       <div class="header-actions">
         <button type="button" id="autoplay-btn" class="pill-btn">Auto-Play Deck</button>
         <button type="button" id="fullscreen-btn" class="pill-btn" title="Toggle Fullscreen">Full screen</button>
-        <button type="button" id="theme-btn" class="pill-btn" title="Toggle Lite / Dark Mode">Dark</button>
+        <button type="button" id="theme-btn" class="pill-btn icon-btn" title="Toggle Light / Dark Mode" aria-label="Toggle Light or Dark Mode">🌙</button>
         <a href="https://halomars.pages.dev" class="pill-btn primary" target="_blank" rel="noopener noreferrer">Live 3D App</a>
       </div>
     </header>
@@ -868,15 +893,33 @@
         <section class="slide" data-slide="0" aria-labelledby="s1-title">
           <div class="slide-header">
             <span class="slide-kicker"><span class="dot"></span> Slide 01 of 07 • Can the crew get home?</span>
-            <h1 id="s1-title" class="slide-title">HALO <span class="name-mars">Mars</span>: <span class="acro"><span class="acro-letter">H</span>azard</span> <span class="acro"><span class="acro-letter">A</span>ware</span> <span class="acro"><span class="acro-letter">L</span>ayered</span> <span class="acro"><span class="acro-letter">O</span>perations</span> <span class="title-on">on</span> Mars</h1>
+            <h1 id="s1-title" class="slide-title">HALO <span class="name-mars">Mars</span>: <span class="acro"><span class="acro-letter">H</span>azard</span> <span class="acro"><span class="acro-letter">A</span>ware</span> <span class="acro"><span class="acro-letter">L</span>ayered</span> <span class="acro"><span class="acro-letter">O</span>perations</span> <span class="title-on">on</span> Mars <a href="https://halomars.pages.dev" target="_blank" rel="noopener noreferrer" class="slide-live-app-pill" title="Launch the live 3D web application">Live 3D App ↗</a></h1>
             <p class="slide-subtitle">A real-time navigation tool that updates the route home as geographic, atmospheric, and astronaut's physiological conditions change.</p>
           </div>
 
           <div class="kpi-grid">
-            <div class="kpi-box"><strong class="kpi-val mono-num">22 min</strong><span class="kpi-label">Farthest light-time from Earth</span></div>
-            <div class="kpi-box"><strong class="kpi-val mono-num">5 layers</strong><span class="kpi-label">NASA map data in one decision</span></div>
-            <div class="kpi-box"><strong class="kpi-val mono-num">75–100%</strong><span class="kpi-label">Green, amber, then turn back</span></div>
-            <div class="kpi-box"><strong class="kpi-val mono-num">5+ hrs</strong><span class="kpi-label">Bearing home on one coin cell</span></div>
+            <div class="kpi-box">
+              <strong class="kpi-val mono-num">22 min</strong>
+              <span class="kpi-label">Farthest light-time from Earth for comms</span>
+            </div>
+            <div class="kpi-box">
+              <strong class="kpi-val mono-num">5 layers</strong>
+              <span class="kpi-label">NASA map data in one view</span>
+            </div>
+            <div class="kpi-box">
+              <strong class="kpi-val mono-num">4 Vitals</strong>
+              <span class="kpi-label">Astronaut physiology &amp; exertion</span>
+            </div>
+            <div class="kpi-box">
+              <strong class="kpi-val" style="font-size:clamp(13px, 1.35vw, 16.5px);letter-spacing:-0.01em;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;">
+                <span style="color:var(--safe-fg);">Green</span>
+                <span style="color:var(--text-muted);font-weight:400;">·</span>
+                <span style="color:var(--caution-fg);">Amber</span>
+                <span style="color:var(--text-muted);font-weight:400;">·</span>
+                <span style="color:var(--crit-fg);">Red</span>
+              </strong>
+              <span class="kpi-label">Real-time safe return margin</span>
+            </div>
           </div>
 
           <div class="two-col">
@@ -933,7 +976,7 @@
           <div class="slide-header">
             <span class="slide-kicker"><span class="dot"></span> Slide 02 of 07 • Five NASA map layers</span>
             <h2 id="s2-title" class="slide-title">Five NASA map layers, one decision, one view</h2>
-            <p class="slide-subtitle">One layer is on screen at a time. Turning a layer on or off changes how far the crew can safely go.</p>
+            <p class="slide-subtitle">Five planetary datasets fuse into a single safe-return boundary. Toggle any hazard to see its direct impact on crew range.</p>
           </div>
 
           <div class="layers-grid">
@@ -969,34 +1012,34 @@
           </div>
 
           <div class="reasoning-strip">
-            <strong>Why each layer matters:</strong> These five layers are calibrated map data for those instruments. DONKI updates live when the feed responds. Turning a layer off shows how much safe ground that hazard removes.
+            <strong>Single integrated model:</strong> Slopes, loose sand, headwinds, and radiation don't act in isolation—their combined effect dictates the realtime safe return boundary.
           </div>
         </section>
 
         <!-- SLIDE 3 -->
         <section class="slide" data-slide="2" aria-labelledby="s3-title" hidden>
           <div class="slide-header">
-            <span class="slide-kicker"><span class="dot"></span> Slide 03 of 07 • Walk out and walk back</span>
-            <h2 id="s3-title" class="slide-title">The walk back is a different cost</h2>
-            <p class="slide-subtitle">The map adds the cost to get there and the cost to get home.</p>
+            <span class="slide-kicker"><span class="dot"></span> Slide 03 of 07 • Safe return &amp; biophysical limits</span>
+            <h2 id="s3-title" class="slide-title">HALO Mars calculates the true point of safe return</h2>
+            <p class="slide-subtitle">Astronaut physiology, terrain slope, and sample weight mean walking back takes far more energy than walking out.</p>
           </div>
 
           <div class="two-col">
             <div style="display:flex;flex-direction:column;gap:12px;">
               <article class="bento-card">
-                <span class="card-tag">Two scores, then one map</span>
+                <span class="card-tag">Dual-pass round trip &amp; biophysical triage</span>
                 <ul class="bullet-list">
-                  <li><strong>Walk back:</strong> From every place on the map, score the trip home to base. The climb is often the hard part.</li>
-                  <li><strong>Walk out:</strong> From where the astronaut is now, score the trip outward. The color of the map is those two costs added together.</li>
-                  <li><strong>What runs out first:</strong> Oxygen, battery, calories, or radiation. Heart rate, blood oxygen, core temperature, and suit carbon dioxide change how fast those reserves are used.</li>
+                  <li><strong>Return cost:</strong> Calculates the energy and consumable cost from every terrain cell back to base. Climbing uphill against gravity with collected samples is where energy spikes.</li>
+                  <li><strong>Outbound cost:</strong> Calculates the cost to reach candidate locations from the crew's current position. Adding outbound and return costs reveals the true safe return boundary.</li>
+                  <li><strong>4-System triage:</strong> Actively monitors oxygen, battery, calories, and radiation. Astronaut vitals (heart rate, SpO₂, core temperature, and suit CO₂) dynamically accelerate consumable depletion.</li>
                 </ul>
               </article>
 
               <article class="bento-card reasoning-card alert">
-                <span class="card-tag">Waypoint 3 — the samples are too heavy</span>
+                <span class="card-tag">Interactive scenario: Waypoint 3 sample overload</span>
                 <div class="status-pill-demo crit">TURN BACK • Waypoint 3, 2.8 km from base</div>
                 <p style="font-size:12.5px;line-height:1.42;color:var(--text-secondary);">
-                  The demo adds <strong>25 kg</strong> of samples, so the crew carries <strong>40 kg</strong> of rock and <strong>90 kg</strong> with the suit, at <strong>168 BPM</strong>. Base is still 2.8 km away, and that scene puts the walk back past the oxygen and calorie reserves.
+                  Adding <strong>25 kg</strong> of core samples raises carried mass to <strong>90 kg</strong> (with suit) while heart rate reaches <strong>168 BPM</strong>. Even though base is only 2.8 km away, the uphill climb pushes the return trip beyond safe oxygen and calorie reserves.
                 </p>
               </article>
             </div>
@@ -1005,13 +1048,13 @@
               <span class="card-tag">What changes the way home</span>
               <table class="deck-table">
                 <thead>
-                  <tr><th>What changes</th><th>What the crew feels</th><th>Effect on the way home</th></tr>
+                  <tr><th>Variable</th><th>What the astronaut experiences</th><th>Impact on safe return</th></tr>
                 </thead>
                 <tbody>
-                  <tr><td><strong>Slope</strong></td><td>Uphill costs more than downhill</td><td>The return can be the hard half</td></tr>
-                  <tr><td><strong>Heart and oxygen</strong></td><td>Higher heart rate, lower blood oxygen</td><td>Reserves are used faster</td></tr>
-                  <tr><td><strong>Heat</strong></td><td>Core above 37.5°C, plus suit heating or cooling</td><td>Metabolism rises, and the battery pays for both</td></tr>
-                  <tr><td><strong>Why two scores?</strong></td><td>The way out is not the way back</td><td>A circle around base misses that</td></tr>
+                  <tr><td><strong>Slope &amp; terrain</strong></td><td>Uphill climb on loose sand requires up to 4× metabolic power</td><td>Outbound descent was easy, but return uphill cuts safe range in half</td></tr>
+                  <tr><td><strong>Cardiovascular strain</strong></td><td>Elevated heart rate (&gt;150 BPM) and lower blood oxygen (SpO₂)</td><td>Accelerates oxygen and calorie burn exponentially</td></tr>
+                  <tr><td><strong>Thermal strain</strong></td><td>Core temperature &gt;37.5°C triggers active suit cooling</td><td>Increases metabolic fatigue while suit cooling drains battery</td></tr>
+                  <tr><td><strong>Sample payload</strong></td><td>Carrying up to 40 kg of collected rock samples</td><td>Adds dead weight to every uphill step of the return trip</td></tr>
                 </tbody>
               </table>
             </article>
@@ -1021,14 +1064,14 @@
         <!-- SLIDE 4 -->
         <section class="slide" data-slide="3" aria-labelledby="s4-title" hidden>
           <div class="slide-header">
-            <span class="slide-kicker"><span class="dot"></span> Slide 04 of 07 • The wrist watch</span>
-            <h2 id="s4-title" class="slide-title">A watch that still points home</h2>
-            <p class="slide-subtitle">If suit power fails, the crew still needs a bearing back to base.</p>
+            <span class="slide-kicker"><span class="dot"></span> Slide 04 of 07 • Ultra Low Power mode</span>
+            <h2 id="s4-title" class="slide-title">Eco mode navigation for wearable screens</h2>
+            <p class="slide-subtitle">If an astronaut's battery runs low in the field, one tap turns the heavy 3D map into a high contrast watch view, extending the survival window.</p>
           </div>
 
           <div class="two-col balanced">
             <figure class="diagram-box" style="align-items:center;">
-              <svg viewBox="0 0 380 205" role="img" aria-label="Full watch with the map on, beside a 1 hertz watch with the map off">
+              <svg viewBox="0 0 380 205" role="img" aria-label="Full 3D map mode beside power-gated Eco Mode watch view">
                 <rect x="0" y="0" width="380" height="205" rx="10" fill="#090d16" />
                 <g transform="translate(22,18)">
                   <rect x="0" y="0" width="152" height="168" rx="30" fill="#131926" stroke="#334155" stroke-width="2" />
@@ -1037,34 +1080,34 @@
                   <path d="M76 76 L98 48" stroke="#0a84ff" stroke-width="3" stroke-linecap="round" />
                   <circle cx="98" cy="48" r="4" fill="#38bdf8" />
                   <circle cx="76" cy="76" r="3.5" fill="#ffffff" />
-                  <text x="76" y="144" fill="#f8fafc" font-size="9.5" font-weight="700" text-anchor="middle">Full watch • map on</text>
-                  <text x="76" y="158" fill="#60a5fa" font-size="8.5" text-anchor="middle">Bearing and safe boundary</text>
+                  <text x="76" y="144" fill="#f8fafc" font-size="9.5" font-weight="700" text-anchor="middle">Full 3D Map</text>
+                  <text x="76" y="158" fill="#60a5fa" font-size="8.5" text-anchor="middle">Scouting &amp; planning</text>
                 </g>
                 <g transform="translate(206,18)">
                   <rect x="0" y="0" width="152" height="168" rx="30" fill="#000000" stroke="#30d158" stroke-width="2.2" />
                   <circle cx="76" cy="76" r="46" fill="none" stroke="#30d158" stroke-width="2" stroke-dasharray="6 4" />
                   <path d="M76 102 L76 48 M64 60 L76 48 L88 60" fill="none" stroke="#30d158" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-                  <text x="76" y="144" fill="#30d158" font-size="9.5" font-weight="700" text-anchor="middle">1 Hz watch • map off</text>
-                  <text x="76" y="158" fill="#30d158" font-size="8.5" text-anchor="middle">5+ hrs on one coin cell</text>
+                  <text x="76" y="144" fill="#30d158" font-size="9.5" font-weight="700" text-anchor="middle">Eco Watch View</text>
+                  <text x="76" y="158" fill="#30d158" font-size="8.5" text-anchor="middle">5+ hrs walk (estimated)</text>
                 </g>
               </svg>
-              <figcaption class="diagram-caption">The 3D view stops. The watch keeps the bearing home.</figcaption>
+              <figcaption class="diagram-caption">The heavy 3D graphics turn off to save battery. A crisp compass arrow guides the astronaut home.</figcaption>
             </figure>
 
             <div style="display:flex;flex-direction:column;gap:12px;">
               <article class="bento-card">
-                <span class="card-tag">What the watch shows</span>
+                <span class="card-tag">The field emergency use case</span>
                 <ul class="bullet-list">
-                  <li><strong>Direction home:</strong> The safe boundary, the bearing back to base, how far is left, and which reserve is running out: effort, oxygen, battery, or radiation.</li>
-                  <li><strong>Map off:</strong> One tap switches off the 3D map. A simple 1 Hz display keeps pointing home.</li>
-                  <li><strong>One coin cell:</strong> That display draws about 42 mW, <strong>5+ hours</strong> on one CR2032 coin cell (estimated).</li>
+                  <li><strong>When power is running out:</strong> If suit battery drops or electronics overheat, one tap shuts down heavy 3D graphics to stretch battery life.</li>
+                  <li><strong>Works on any screen:</strong> Opens inside smartwatch screens, sleeve-mounted field pads, or helmet HUDs via standard web browsers with zero installation.</li>
+                  <li><strong>Readable in blinding glare:</strong> Bright neon-green on pitch black stays sharp and legible even under harsh Martian sunlight.</li>
                 </ul>
               </article>
 
               <article class="bento-card reasoning-card safe">
-                <span class="card-tag">Why the map can be switched off</span>
+                <span class="card-tag">Just what you need to survive</span>
                 <p style="font-size:12.8px;line-height:1.44;color:var(--text-secondary);">
-                  During a solar storm or a suit power fault, a bright 3D map drains a small battery. Switching the map off keeps the direction home for 5+ hours on one coin cell.
+                  The screen cuts out all distractions and shows only what matters: a <strong>big arrow pointing home</strong> along the lowest-cost path, a <strong>turnaround margin ring</strong> (green safe, amber caution, flashing turn back), and a clear warning of what is running out first (oxygen, suit battery, or calories). Runs for <strong>5+ hours (estimated)</strong> on minimal power.
                 </p>
               </article>
             </div>
@@ -1074,33 +1117,33 @@
         <!-- SLIDE 5 -->
         <section class="slide" data-slide="4" aria-labelledby="s5-title" hidden>
           <div class="slide-header">
-            <span class="slide-kicker"><span class="dot"></span> Slide 05 of 07 • Zero-GPS match</span>
-            <h2 id="s5-title" class="slide-title">A horizon drawn from the elevation map</h2>
-            <p class="slide-subtitle">With no GPS on Mars, the astronaut sees a location for the horizon at the pin. The way back is drawn from that pin.</p>
+            <span class="slide-kicker"><span class="dot"></span> Slide 05 of 07 • GPS Free Navigation</span>
+            <h2 id="s5-title" class="slide-title">Optical navigation finds position from the horizon</h2>
+            <p class="slide-subtitle">Mars has no GPS or magnetic compass. HALO Mars matches the 360° mountain skyline against orbital terrain maps to lock position and heading.</p>
           </div>
 
           <div class="two-col">
             <figure class="diagram-box">
-              <svg viewBox="0 0 380 205" role="img" aria-label="Stored horizon compared with the turned copy at the current pin">
+              <svg viewBox="0 0 380 205" role="img" aria-label="Orbital DEM horizon profile correlated with camera visor skyline silhouette">
                 <rect x="0" y="0" width="380" height="205" rx="10" fill="#090f1d" />
                 <line x1="24" y1="165" x2="360" y2="165" stroke="rgba(255,255,255,0.16)" />
                 <line x1="24" y1="120" x2="360" y2="120" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3 3" />
                 <line x1="24" y1="75" x2="360" y2="75" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3 3" />
                 <path d="M24 148 L52 132 L80 96 L112 72 L145 108 L178 138 L212 92 L248 56 L282 88 L318 124 L360 144" fill="none" stroke="#0a84ff" stroke-width="3" />
                 <path d="M24 150 L54 129 L82 99 L114 75 L146 105 L180 140 L214 95 L249 58 L280 90 L316 122 L360 146" fill="none" stroke="#30d158" stroke-width="2" stroke-dasharray="5 3" />
-                <text x="30" y="28" fill="#60a5fa" font-size="10" font-weight="700">Solid blue: horizon stored for each map cell</text>
-                <text x="30" y="43" fill="#30d158" font-size="10" font-weight="700">Dashed green: pin copy, turned in 10° steps</text>
+                <text x="30" y="28" fill="#60a5fa" font-size="10" font-weight="700">Solid blue: precomputed horizon from orbital DEM</text>
+                <text x="30" y="43" fill="#30d158" font-size="10" font-weight="700">Dashed green: visible skyline matched across 36 azimuths</text>
                 <text x="192" y="185" fill="#94a3b8" font-size="9.5" text-anchor="middle">36 directions, one every 10°</text>
               </svg>
-              <figcaption class="diagram-caption">The match reports a cell on the local elevation map, the DEM, and the 10° turn that agree with the copy.</figcaption>
+              <figcaption class="diagram-caption">Correlating the visible horizon with orbital terrain locks true-North heading and position in milliseconds.</figcaption>
             </figure>
 
             <article class="bento-card">
-              <span class="card-tag">What the horizon does</span>
+              <span class="card-tag">How optical navigation works</span>
               <ul class="bullet-list">
-                <li><strong>Every cell:</strong> 36 directions. Each one records the highest angle of the ground.</li>
-                <li><strong>Location:</strong> The horizon at the pin is compared with the local elevation map. The astronaut sees the DEM cell and the 10° turn that agree. The turn comes from the pin’s place on the grid, or from the device compass when it is connected.</li>
-                <li><strong>Way back:</strong> The path is drawn from that pin back to base. Where the ground blocks more of the sky, the radiation dose is lower, and that dose is one of the costs that shapes the way back and how far the crew can still go.</li>
+                <li><strong>Visor or camera feed:</strong> An astronaut's helmet camera or visor extracts the 360° horizon silhouette (simulated in the demo with sensor noise and live device compass yaw).</li>
+                <li><strong>Orbital DEM match:</strong> Correlates that visible skyline against precomputed elevation maps (DEM) to lock exact (X, Y) coordinates and true-North heading in under 2 ms.</li>
+                <li><strong>Radiation shelter bonus:</strong> The same 36 horizon angles calculate canyon wall shielding (Sky-View Factor), steering crew toward natural radiation shelters.</li>
               </ul>
             </article>
           </div>
@@ -1110,8 +1153,8 @@
         <section class="slide" data-slide="5" aria-labelledby="s6-title" hidden>
           <div class="slide-header">
             <span class="slide-kicker"><span class="dot"></span> Slide 06 of 07 • BYOD: bring your own device and data</span>
-            <h2 id="s6-title" class="slide-title">Your elevation, a heart-rate reading, and a route to export</h2>
-            <p class="slide-subtitle">Drop in an elevation file, pair a heart-rate sensor, and download the route.</p>
+            <h2 id="s6-title" class="slide-title">Supports custom terrain, live vitals, and route export</h2>
+            <p class="slide-subtitle">Upload your own elevation grids, stream live astronaut heart rate via Bluetooth, and export standard GIS files.</p>
           </div>
 
           <div class="two-col balanced">
@@ -1134,9 +1177,9 @@
               </article>
 
               <article class="bento-card reasoning-card">
-                <span class="card-tag">Runs in the browser</span>
+                <span class="card-tag">Zero-install client</span>
                 <p style="font-size:12.8px;line-height:1.44;color:var(--text-secondary);">
-                  HALO Mars runs in the browser. The return path can be saved as GPX, and the safe-zone lines as GeoJSON.
+                  Lightweight app runs on modern browsers in offline mode with zero external plugins or server setup.
                 </p>
               </article>
             </div>
@@ -1148,21 +1191,21 @@
           <div class="slide-header">
             <span class="slide-kicker"><span class="dot"></span> Slide 07 of 07 • Dual use</span>
             <h2 id="s7-title" class="slide-title">Dual use <span class="title-on">on</span> Earth</h2>
+            <p class="slide-subtitle">Swapping Mars datasets for Earth USGS and NOAA feeds turns HALO into an offgrid survival tool for hikers and SAR teams.</p>
           </div>
 
           <div class="two-col balanced">
             <article class="bento-card reasoning-card mars">
-              <span class="card-tag">Dual-use case</span>
-              <p class="dual-use-callout">The same turnaround concept could help people get back in remote areas, if Earth maps replace the Mars layers.</p>
+              <p class="dual-use-callout">The same turnaround engine prevents search and rescue teams from getting stranded by computing safe boundaries on terrestrial terrain.</p>
               <table class="deck-table">
                 <thead>
-                  <tr><th>On Mars</th><th>Could become, on Earth</th></tr>
+                  <tr><th>On Mars</th><th>Data on earth</th></tr>
                 </thead>
                 <tbody>
                   <tr><td><strong>Steep cliffs</strong></td><td>USGS slope and cliffs</td></tr>
-                  <tr><td><strong>Loose sand</strong></td><td>Snow, scree, or mud</td></tr>
+                  <tr><td><strong>Loose sand</strong></td><td>Snow, desert, or forests</td></tr>
                   <tr><td><strong>Wind and radiation</strong></td><td>NOAA wind, and smoke or other hazards</td></tr>
-                  <tr><td><strong>Coin-cell watch</strong></td><td>A low-power turnaround alert for rescue teams</td></tr>
+                  <tr><td><strong>Zero GPS skyline</strong></td><td>DEM elevation match of surroundings with offline maps</td></tr>
                 </tbody>
               </table>
             </article>
@@ -1188,7 +1231,7 @@
                   </tr>
                   <tr>
                     <td><strong>Built for</strong></td>
-                    <td><a href="https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/" target="_blank" rel="noopener noreferrer">https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/</a></td>
+                    <td><a href="https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/" target="_blank" rel="noopener noreferrer">NASA Space Apps: Martian Map Challenge ↗</a></td>
                   </tr>
                 </tbody>
               </table>
@@ -1290,8 +1333,8 @@
         const mqDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = document.documentElement.dataset.theme;
         const isDark = theme ? theme === 'dark' : mqDark;
-        themeBtn.textContent = isDark ? 'Light' : 'Dark';
-        themeBtn.title = isDark ? 'Switch to Lite Mode' : 'Switch to Dark Mode';
+        themeBtn.textContent = isDark ? '☀️' : '🌙';
+        themeBtn.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
       }
 
       function toggleTheme() {
